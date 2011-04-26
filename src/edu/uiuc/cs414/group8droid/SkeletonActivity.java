@@ -50,10 +50,12 @@ public class SkeletonActivity
     SurfaceHolder holder;
     MediaPlayer mp;
     SurfaceView mPreview;
-    
-    LinkedBlockingqueue<FrameQueue> dataQueue;
+
+    LinkedBlockingQueue<FrameQueue> dataQueue;
     LinkedBlockingQueue<FrameQueue> audioQueue;
     LinkedBlockingQueue<FrameQueue> videoQueue;
+    boolean active;
+
     public SkeletonActivity() {
     }
 

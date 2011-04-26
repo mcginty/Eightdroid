@@ -108,7 +108,7 @@ public class StreamHandler implements Runnable {
 			Log.e("Eightdroid", "Failed to write data to sserver");
 			e.printStackTrace();
 		}
-		
+
 	}
 	
 	public void close() {
