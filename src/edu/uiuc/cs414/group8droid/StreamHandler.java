@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import android.util.Log;
 
@@ -17,10 +18,10 @@ public class StreamHandler implements Runnable {
     Socket sock;
     DataInputStream input;
     DataOutputStream output;
-    LinkedList<FrameQueue> dataQueue;
+    LinkedBlockingQueue<FrameQueue> dataQueue;
     byte[] dataBuffer;
     
-    public StreamHandler(LinkedList<FrameQueue> queue){
+    public StreamHandler(LinkedBlockingQueue<FrameQueue> queue){
     	this.dataQueue = queue;
     }
 	public void run() {
@@ -68,8 +69,6 @@ public class StreamHandler implements Runnable {
 		
 		// Enqueue frame
 		dataQueue.add(curFrame);
-		
-		
 	}
 	
 	public void close() {

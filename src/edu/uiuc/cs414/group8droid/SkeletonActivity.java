@@ -17,6 +17,7 @@
 package edu.uiuc.cs414.group8droid;
 
 import java.util.LinkedList;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import android.app.Activity;
 import android.media.AudioManager;
@@ -50,7 +51,7 @@ public class SkeletonActivity
     private MediaPlayer mp;
     SurfaceView mPreview;
     
-    LinkedList<FrameQueue> dataQueue;
+    LinkedBlockingQueue<FrameQueue> dataQueue;
     
     public SkeletonActivity() {
     }
