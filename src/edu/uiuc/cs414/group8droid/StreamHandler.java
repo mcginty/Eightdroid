@@ -2,10 +2,11 @@ package edu.uiuc.cs414.group8droid;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-public class StreamHandler extends Thread {
+public class StreamHandler implements Runnable {
     /**
      * Sockets required to handle our own protocol stuff. We're *not* using
      * any kind of HTTP or RTSP streaming for the time being.
@@ -20,11 +21,20 @@ public class StreamHandler extends Thread {
 			input = new DataInputStream(sock.getInputStream());
 			output = new DataOutputStream(sock.getOutputStream());
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+	
+	public void close() {
+		try {
+			output.close();
+			input.close();
+			sock.close();
+		} 
+		catch (IOException e) {
+			System.out.println(e);
 		}
 	}
 }
