@@ -51,8 +51,9 @@ public class SkeletonActivity
     MediaPlayer mp;
     SurfaceView mPreview;
     
-    LinkedBlockingQueue<FrameQueue> dataQueue;
-    
+    LinkedBlockingqueue<FrameQueue> dataQueue;
+    LinkedBlockingQueue<FrameQueue> audioQueue;
+    LinkedBlockingQueue<FrameQueue> videoQueue;
     public SkeletonActivity() {
     }
 

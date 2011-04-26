@@ -18,13 +18,17 @@ public class StreamHandler implements Runnable {
     Socket sock;
     DataInputStream input;
     DataOutputStream output;
-    LinkedBlockingQueue<FrameQueue> dataQueue;
+    LinkedBlockingQueue<FrameQueue> videoQueue;
+    LinkedBlockingQueue<FrameQueue> audioQueue;
     byte[] dataBuffer;
     final static int streamPort = 3827;
     final static String serverIP = "127.0.0.1";
+    final static byte videoFlag = 0x01;
+    final static byte audioFlag = 0x02;
     
-    public StreamHandler(LinkedBlockingQueue<FrameQueue> queue){
-    	this.dataQueue = queue;
+    public StreamHandler(LinkedBlockingQueue<FrameQueue> vidQueue, LinkedBlockingQueue<FrameQueue> audioQueue){
+    	this.videoQueue = vidQueue;
+    	this.audioQueue = audioQueue;
     }
 	public void run() {
         try {
@@ -69,15 +73,18 @@ public class StreamHandler implements Runnable {
 		}
 		while (totalBytesRead < curFrame.size);
 		
-		// Enqueue frame
-		dataQueue.add(curFrame);
+		// Enqueue frame in corresponding queue
+		if(curFrame.flags == videoFlag)
+			videoQueue.add(curFrame);
+		else if(curFrame.flags == audioFlag)
+			audioQueue.add(curFrame);
 	}
 	
 	public void writeStream() {
 		
 		// Dequeue frame
 		FrameQueue newFrame = new FrameQueue();
-		newFrame = dataQueue.remove();
+		//TODO newFrame = dataQueue.remove();
 		
 		// Write header
 		try {
