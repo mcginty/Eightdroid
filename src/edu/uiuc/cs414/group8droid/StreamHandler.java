@@ -5,6 +5,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.LinkedList;
+
+import android.util.Log;
 
 public class StreamHandler implements Runnable {
     /**
@@ -14,17 +17,59 @@ public class StreamHandler implements Runnable {
     Socket sock;
     DataInputStream input;
     DataOutputStream output;
+    LinkedList<FrameQueue> dataQueue;
+    byte[] dataBuffer;
     
+    public StreamHandler(LinkedList<FrameQueue> queue){
+    	this.dataQueue = queue;
+    }
 	public void run() {
         try {
 			sock = new Socket("iro", 666);
 			input = new DataInputStream(sock.getInputStream());
 			output = new DataOutputStream(sock.getOutputStream());
+			readStream();
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void readStream() {
+		// Read header
+		FrameQueue curFrame = new FrameQueue();
+		try {
+			curFrame.controltime = input.readInt();
+			curFrame.timestamp = input.readInt();
+			curFrame.servertime = input.readDouble();
+			curFrame.size = input.readInt();
+			curFrame.checksum = input.readShort();
+			curFrame.flags = input.readByte();
+		} catch (IOException e) {
+			Log.e("Eightdroid", "Failed to read header from server");
+			e.printStackTrace();
+		}
+
+		// Read data
+		int totalBytesRead = 0;
+		int curBytesRead = 0;
+		dataBuffer = new byte[curFrame.size];
+		do {
+			try {
+				curBytesRead = input.read(dataBuffer, totalBytesRead, curFrame.size - totalBytesRead);
+			} catch (IOException e) {
+				Log.e("Eightdroid", "Failed to read data from server");
+				e.printStackTrace();
+			}
+			totalBytesRead += curBytesRead;
+		}
+		while (totalBytesRead < curFrame.size);
+		
+		// Enqueue frame
+		dataQueue.add(curFrame);
+		
+		
 	}
 	
 	public void close() {
