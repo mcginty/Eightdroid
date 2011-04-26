@@ -20,13 +20,15 @@ public class StreamHandler implements Runnable {
     DataOutputStream output;
     LinkedBlockingQueue<FrameQueue> dataQueue;
     byte[] dataBuffer;
+    final static int streamPort = 3827;
+    final static String serverIP = "127.0.0.1";
     
     public StreamHandler(LinkedBlockingQueue<FrameQueue> queue){
     	this.dataQueue = queue;
     }
 	public void run() {
         try {
-			sock = new Socket("iro", 666);
+			sock = new Socket(serverIP, streamPort);
 			input = new DataInputStream(sock.getInputStream());
 			output = new DataOutputStream(sock.getOutputStream());
 			readStream();
@@ -69,6 +71,37 @@ public class StreamHandler implements Runnable {
 		
 		// Enqueue frame
 		dataQueue.add(curFrame);
+	}
+	
+	public void writeStream() {
+		
+		// Dequeue frame
+		FrameQueue newFrame = new FrameQueue();
+		newFrame = dataQueue.remove();
+		
+		// Write header
+		try {
+			output.writeInt(newFrame.controltime);
+			output.writeInt(newFrame.timestamp);
+			output.writeDouble(newFrame.servertime);
+			output.writeInt(newFrame.size);
+			output.writeShort(newFrame.checksum);
+			output.writeByte(newFrame.flags);
+		} catch (IOException e) {
+			Log.e("Eightdroid", "Failed to write header to server");
+			e.printStackTrace();
+		}
+
+		// Write data
+		dataBuffer = new byte[newFrame.size];
+			
+		try {
+			output.write(dataBuffer, 0, newFrame.size);
+		} catch (IOException e) {
+			Log.e("Eightdroid", "Failed to write data to sserver");
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public void close() {
