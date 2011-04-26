@@ -47,8 +47,8 @@ public class SkeletonActivity
     
     static final private int BACK_ID = Menu.FIRST;
     static final private String TAG = "Eightdroid";
-    private SurfaceHolder holder;
-    private MediaPlayer mp;
+    SurfaceHolder holder;
+    MediaPlayer mp;
     SurfaceView mPreview;
     
     LinkedBlockingQueue<FrameQueue> dataQueue;
