@@ -16,9 +16,11 @@
 
 package edu.uiuc.cs414.group8droid;
 
-import java.io.File;
-import java.io.FileDescriptor;
+import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.DataOutputStream;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 import android.app.Activity;
 import android.media.AudioManager;
@@ -52,6 +54,14 @@ public class SkeletonActivity
     private MediaPlayer mp;
     SurfaceView mPreview;
     
+    /**
+     * Sockets required to handle our own protocol stuff. We're *not* using
+     * any kind of HTTP or RTSP streaming for the time being.
+     */
+    Socket sock;
+    DataInputStream input;
+    DataOutputStream output;
+    
     public SkeletonActivity() {
     }
 
@@ -67,6 +77,18 @@ public class SkeletonActivity
         holder = mPreview.getHolder();
         holder.addCallback(this);
         holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        
+        try {
+			sock = new Socket("iro", 666);
+			input = new DataInputStream(sock.getInputStream());
+			output = new DataOutputStream(sock.getOutputStream());
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     /**
@@ -153,8 +175,14 @@ public class SkeletonActivity
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		// TODO Auto-generated method stub
-		
+		try {
+			output.close();
+			input.close();
+			sock.close();
+		} 
+		catch (IOException e) {
+			System.out.println(e);
+		}
 	}
 
 	@Override
