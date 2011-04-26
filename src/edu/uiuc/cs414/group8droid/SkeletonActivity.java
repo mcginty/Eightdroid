@@ -16,15 +16,24 @@
 
 package edu.uiuc.cs414.group8droid;
 
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.IOException;
+
 import android.app.Activity;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnBufferingUpdateListener;
+import android.media.MediaPlayer.OnCompletionListener;
+import android.media.MediaPlayer.OnErrorListener;
 import android.os.Bundle;
-import android.view.KeyEvent;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.EditText;
 import edu.uiuc.cs414.group8droid.R;
 
 /**
@@ -32,12 +41,16 @@ import edu.uiuc.cs414.group8droid.R;
  * activity. Inside of its window, it places a single view: an EditText that
  * displays and edits some internal text.
  */
-public class SkeletonActivity extends Activity {
+public class SkeletonActivity
+		extends Activity 
+		implements OnErrorListener, OnBufferingUpdateListener, OnCompletionListener, 
+					MediaPlayer.OnPreparedListener, SurfaceHolder.Callback {
     
     static final private int BACK_ID = Menu.FIRST;
-    static final private int CLEAR_ID = Menu.FIRST + 1;
-
-    private EditText mEditor;
+    static final private String TAG = "Eightdroid";
+    private SurfaceHolder holder;
+    private MediaPlayer mp;
+    SurfaceView mPreview;
     
     public SkeletonActivity() {
     }
@@ -49,16 +62,11 @@ public class SkeletonActivity extends Activity {
 
         // Inflate our UI from its XML layout description.
         setContentView(R.layout.skeleton_activity);
-
-        // Find the text editor view inside the layout, because we
-        // want to do various programmatic things with it.
-        mEditor = (EditText) findViewById(R.id.editor);
-
-        // Hook up button presses to the appropriate event handler.
-        ((Button) findViewById(R.id.back)).setOnClickListener(mBackListener);
-        ((Button) findViewById(R.id.clear)).setOnClickListener(mClearListener);
-        
-        mEditor.setText(getText(R.string.main_label));
+        // Our MediaPlayer will stream the video to this VideoView
+        mPreview = ((SurfaceView) findViewById(R.id.streamingVideo));
+        holder = mPreview.getHolder();
+        holder.addCallback(this);
+        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
     }
 
     /**
@@ -80,7 +88,6 @@ public class SkeletonActivity extends Activity {
         // unique integer IDs, labels from our string resources, and
         // given them shortcuts.
         menu.add(0, BACK_ID, 0, R.string.back).setShortcut('0', 'b');
-        menu.add(0, CLEAR_ID, 0, R.string.clear).setShortcut('1', 'c');
 
         return true;
     }
@@ -91,11 +98,6 @@ public class SkeletonActivity extends Activity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-
-        // Before showing the menu, we need to decide whether the clear
-        // item is enabled depending on whether there is text to clear.
-        menu.findItem(CLEAR_ID).setVisible(mEditor.getText().length() > 0);
-
         return true;
     }
 
@@ -107,9 +109,6 @@ public class SkeletonActivity extends Activity {
         switch (item.getItemId()) {
         case BACK_ID:
             finish();
-            return true;
-        case CLEAR_ID:
-            mEditor.setText("");
             return true;
         }
 
@@ -130,7 +129,59 @@ public class SkeletonActivity extends Activity {
      */
     OnClickListener mClearListener = new OnClickListener() {
         public void onClick(View v) {
-            mEditor.setText("");
         }
     };
+
+	@Override
+	public void surfaceCreated(SurfaceHolder holder) {
+		mp = MediaPlayer.create(this, R.raw.sample_mpeg4);
+        mp.setOnErrorListener(this);
+        mp.setOnBufferingUpdateListener(this);
+        mp.setOnCompletionListener(this);
+        mp.setOnPreparedListener(this);
+        mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mp.setDisplay(holder);
+        Log.d(TAG, "Video Height: " + mp.getVideoHeight() + ", Width: " + mp.getVideoWidth());
+	}
+
+	@Override
+	public void surfaceChanged(SurfaceHolder holder, int format, int width,
+			int height) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void surfaceDestroyed(SurfaceHolder holder) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPrepared(MediaPlayer mp) {
+		holder.setFixedSize(mp.getVideoWidth(), mp.getVideoHeight());
+        mp.start();
+	}
+
+	@Override
+	public void onCompletion(MediaPlayer mp) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onBufferingUpdate(MediaPlayer mp, int percent) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean onError(MediaPlayer mp, int what, int extra) {
+		Log.e(TAG, "onError--->   what:" + what + "    extra:" + extra);
+        if (mp != null) {
+            mp.stop();
+            mp.release();
+        }
+		return false;
+	}
 }
