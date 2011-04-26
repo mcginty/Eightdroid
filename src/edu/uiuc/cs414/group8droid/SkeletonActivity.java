@@ -37,7 +37,7 @@ import edu.uiuc.cs414.group8droid.R;
 
 /**
  * This class provides a basic demonstration of how to write an Android
- * activity. Inside of its window, it places a single view: an EditText that
+ * activity. Inside of its window, it places a single viListew: an EditText that
  * displays and edits some internal text.
  */
 public class SkeletonActivity
