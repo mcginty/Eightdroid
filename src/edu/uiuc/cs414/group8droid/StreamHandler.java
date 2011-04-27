@@ -55,6 +55,7 @@ public class StreamHandler implements Runnable {
 		while (!done) {
 			try {
 				size = input.readByte();
+				Log.d("Eightdroid", "Received packet of size " + size);
 				byte[] bytes = new byte[size];
 				input.readFully(bytes);
 				DataPacket pkt = DataPacket.parseFrom(bytes);
@@ -67,6 +68,7 @@ public class StreamHandler implements Runnable {
 					audioQueue.add(pkt);
 				}
 			} catch (IOException e) {
+				Log.e("Eightdroid", "IOException in receiving the packet. Message: " + e.getMessage());
 				e.printStackTrace();
 			}
 		}
