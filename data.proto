@@ -1,0 +1,22 @@
+package tutorial;
+
+option java_package = "edu.uiuc.cs414.group8desktop";
+option java_outer_classname = "DataProto";
+
+message DataPacket {
+  required int64 timestamp = 1;
+  required int64 servertime = 2;
+
+  enum PacketType {
+    VIDEO = 0;
+    AUDIO = 1;
+  }
+  required PacketType type = 3;
+  required bytes data = 4;
+}
+
+message ControlPacket {
+  enum ControlType {
+  	DEFAULT = 0;
+  }
+}

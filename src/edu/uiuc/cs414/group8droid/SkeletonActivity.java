@@ -16,8 +16,11 @@
 
 package edu.uiuc.cs414.group8droid;
 
-import java.util.LinkedList;
+import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.SynchronousQueue;
+
+import edu.uiuc.cs414.group8desktop.DataProto.DataPacket;
 
 import android.app.Activity;
 import android.media.AudioManager;
@@ -30,11 +33,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
-import edu.uiuc.cs414.group8droid.R;
 
 /**
  * This class provides a basic demonstration of how to write an Android
@@ -42,19 +43,15 @@ import edu.uiuc.cs414.group8droid.R;
  * displays and edits some internal text.
  */
 public class SkeletonActivity
-		extends Activity 
-		implements OnErrorListener, OnBufferingUpdateListener, OnCompletionListener, 
-					MediaPlayer.OnPreparedListener, SurfaceHolder.Callback {
+		extends Activity {
     
     static final private int BACK_ID = Menu.FIRST;
     static final private String TAG = "Eightdroid";
-    SurfaceHolder holder;
-    MediaPlayer mp;
     ImageView mVideoDisplay;
+    StreamHandler stream;
 
-    LinkedBlockingQueue<FrameQueue> dataQueue;
-    LinkedBlockingQueue<FrameQueue> audioQueue;
-    LinkedBlockingQueue<FrameQueue> videoQueue;
+    Queue<DataPacket> audioQueue;
+    Queue<DataPacket> videoQueue;
     boolean active;
 
     public SkeletonActivity() {
@@ -69,6 +66,11 @@ public class SkeletonActivity
         setContentView(R.layout.skeleton_activity);
         // Our MediaPlayer will stream the video to this VideoView
         mVideoDisplay = ((ImageView) findViewById(R.id.streamingVideo));
+        
+        audioQueue = new LinkedBlockingQueue<DataPacket>();
+        videoQueue = new LinkedBlockingQueue<DataPacket>();
+        stream = new StreamHandler(audioQueue, videoQueue);
+        (new Thread(stream)).start();
     }
 
     /**
@@ -133,56 +135,4 @@ public class SkeletonActivity
         public void onClick(View v) {
         }
     };
-
-	@Override
-	public void surfaceCreated(SurfaceHolder holder) {
-		mp = MediaPlayer.create(this, R.raw.sample_mpeg4);
-        mp.setOnErrorListener(this);
-        mp.setOnBufferingUpdateListener(this);
-        mp.setOnCompletionListener(this);
-        mp.setOnPreparedListener(this);
-        mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        mp.setDisplay(holder);
-        Log.d(TAG, "Video Height: " + mp.getVideoHeight() + ", Width: " + mp.getVideoWidth());
-	}
-
-	@Override
-	public void surfaceChanged(SurfaceHolder holder, int format, int width,
-			int height) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void surfaceDestroyed(SurfaceHolder holder) {
-
-	}
-
-	@Override
-	public void onPrepared(MediaPlayer mp) {
-		holder.setFixedSize(mp.getVideoWidth(), mp.getVideoHeight());
-        mp.start();
-	}
-
-	@Override
-	public void onCompletion(MediaPlayer mp) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onBufferingUpdate(MediaPlayer mp, int percent) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public boolean onError(MediaPlayer mp, int what, int extra) {
-		Log.e(TAG, "onError--->   what:" + what + "    extra:" + extra);
-        if (mp != null) {
-            mp.stop();
-            mp.release();
-        }
-		return false;
-	}
 }
