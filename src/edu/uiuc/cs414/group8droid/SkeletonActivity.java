@@ -39,9 +39,10 @@ public class SkeletonActivity
     
     static final private int BACK_ID = Menu.FIRST;
     static final private String TAG = "Eightdroid";
-    ImageView mVideoDisplay;
-    StreamHandler stream;
-
+    public ImageView mVideoDisplay;
+    public StreamHandler stream;
+    public VideoHandler videoHandler;
+    
     Queue<DataPacket> audioQueue;
     Queue<DataPacket> videoQueue;
     boolean active;
@@ -62,7 +63,11 @@ public class SkeletonActivity
         
         audioQueue = new LinkedBlockingQueue<DataPacket>();
         videoQueue = new LinkedBlockingQueue<DataPacket>();
-        stream = new StreamHandler(audioQueue, videoQueue);
+        
+        videoHandler = new VideoHandler(this);
+        (new Thread(videoHandler)).start();
+        
+        stream = new StreamHandler(this);
         (new Thread(stream)).start();
     }
 

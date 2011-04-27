@@ -39,6 +39,8 @@ public final class DataProto {
         implements com.google.protobuf.ProtocolMessageEnum {
       VIDEO(0, 0),
       AUDIO(1, 1),
+      CONTROL(2, 2),
+      PING(3, 3),
       ;
       
       
@@ -48,6 +50,8 @@ public final class DataProto {
         switch (value) {
           case 0: return VIDEO;
           case 1: return AUDIO;
+          case 2: return CONTROL;
+          case 3: return PING;
           default: return null;
         }
       }
@@ -78,7 +82,7 @@ public final class DataProto {
       }
       
       private static final PacketType[] VALUES = {
-        VIDEO, AUDIO, 
+        VIDEO, AUDIO, CONTROL, PING, 
       };
       public static PacketType valueOf(
           com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
@@ -102,6 +106,77 @@ public final class DataProto {
       // @@protoc_insertion_point(enum_scope:tutorial.DataPacket.PacketType)
     }
     
+    public enum ControlCode
+        implements com.google.protobuf.ProtocolMessageEnum {
+      UP(0, 0),
+      DOWN(1, 1),
+      LEFT(2, 2),
+      RIGHT(3, 3),
+      ;
+      
+      
+      public final int getNumber() { return value; }
+      
+      public static ControlCode valueOf(int value) {
+        switch (value) {
+          case 0: return UP;
+          case 1: return DOWN;
+          case 2: return LEFT;
+          case 3: return RIGHT;
+          default: return null;
+        }
+      }
+      
+      public static com.google.protobuf.Internal.EnumLiteMap<ControlCode>
+          internalGetValueMap() {
+        return internalValueMap;
+      }
+      private static com.google.protobuf.Internal.EnumLiteMap<ControlCode>
+          internalValueMap =
+            new com.google.protobuf.Internal.EnumLiteMap<ControlCode>() {
+              public ControlCode findValueByNumber(int number) {
+                return ControlCode.valueOf(number)
+      ;        }
+            };
+      
+      public final com.google.protobuf.Descriptors.EnumValueDescriptor
+          getValueDescriptor() {
+        return getDescriptor().getValues().get(index);
+      }
+      public final com.google.protobuf.Descriptors.EnumDescriptor
+          getDescriptorForType() {
+        return getDescriptor();
+      }
+      public static final com.google.protobuf.Descriptors.EnumDescriptor
+          getDescriptor() {
+        return edu.uiuc.cs414.group8desktop.DataProto.DataPacket.getDescriptor().getEnumTypes().get(1);
+      }
+      
+      private static final ControlCode[] VALUES = {
+        UP, DOWN, LEFT, RIGHT, 
+      };
+      public static ControlCode valueOf(
+          com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+        if (desc.getType() != getDescriptor()) {
+          throw new java.lang.IllegalArgumentException(
+            "EnumValueDescriptor is not for this type.");
+        }
+        return VALUES[desc.getIndex()];
+      }
+      private final int index;
+      private final int value;
+      private ControlCode(int index, int value) {
+        this.index = index;
+        this.value = value;
+      }
+      
+      static {
+        edu.uiuc.cs414.group8desktop.DataProto.getDescriptor();
+      }
+      
+      // @@protoc_insertion_point(enum_scope:tutorial.DataPacket.ControlCode)
+    }
+    
     // required int64 timestamp = 1;
     public static final int TIMESTAMP_FIELD_NUMBER = 1;
     private boolean hasTimestamp;
@@ -123,21 +198,35 @@ public final class DataProto {
     public boolean hasType() { return hasType; }
     public edu.uiuc.cs414.group8desktop.DataProto.DataPacket.PacketType getType() { return type_; }
     
-    // required bytes data = 4;
+    // optional bytes data = 4;
     public static final int DATA_FIELD_NUMBER = 4;
     private boolean hasData;
     private com.google.protobuf.ByteString data_ = com.google.protobuf.ByteString.EMPTY;
     public boolean hasData() { return hasData; }
     public com.google.protobuf.ByteString getData() { return data_; }
     
+    // optional .tutorial.DataPacket.ControlCode control = 5;
+    public static final int CONTROL_FIELD_NUMBER = 5;
+    private boolean hasControl;
+    private edu.uiuc.cs414.group8desktop.DataProto.DataPacket.ControlCode control_;
+    public boolean hasControl() { return hasControl; }
+    public edu.uiuc.cs414.group8desktop.DataProto.DataPacket.ControlCode getControl() { return control_; }
+    
+    // optional int32 pingid = 6;
+    public static final int PINGID_FIELD_NUMBER = 6;
+    private boolean hasPingid;
+    private int pingid_ = 0;
+    public boolean hasPingid() { return hasPingid; }
+    public int getPingid() { return pingid_; }
+    
     private void initFields() {
       type_ = edu.uiuc.cs414.group8desktop.DataProto.DataPacket.PacketType.VIDEO;
+      control_ = edu.uiuc.cs414.group8desktop.DataProto.DataPacket.ControlCode.UP;
     }
     public final boolean isInitialized() {
       if (!hasTimestamp) return false;
       if (!hasServertime) return false;
       if (!hasType) return false;
-      if (!hasData) return false;
       return true;
     }
     
@@ -155,6 +244,12 @@ public final class DataProto {
       }
       if (hasData()) {
         output.writeBytes(4, getData());
+      }
+      if (hasControl()) {
+        output.writeEnum(5, getControl().getNumber());
+      }
+      if (hasPingid()) {
+        output.writeInt32(6, getPingid());
       }
       getUnknownFields().writeTo(output);
     }
@@ -180,6 +275,14 @@ public final class DataProto {
       if (hasData()) {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(4, getData());
+      }
+      if (hasControl()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeEnumSize(5, getControl().getNumber());
+      }
+      if (hasPingid()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(6, getPingid());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -351,6 +454,12 @@ public final class DataProto {
         if (other.hasData()) {
           setData(other.getData());
         }
+        if (other.hasControl()) {
+          setControl(other.getControl());
+        }
+        if (other.hasPingid()) {
+          setPingid(other.getPingid());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
@@ -396,6 +505,20 @@ public final class DataProto {
             }
             case 34: {
               setData(input.readBytes());
+              break;
+            }
+            case 40: {
+              int rawValue = input.readEnum();
+              edu.uiuc.cs414.group8desktop.DataProto.DataPacket.ControlCode value = edu.uiuc.cs414.group8desktop.DataProto.DataPacket.ControlCode.valueOf(rawValue);
+              if (value == null) {
+                unknownFields.mergeVarintField(5, rawValue);
+              } else {
+                setControl(value);
+              }
+              break;
+            }
+            case 48: {
+              setPingid(input.readInt32());
               break;
             }
           }
@@ -460,7 +583,7 @@ public final class DataProto {
         return this;
       }
       
-      // required bytes data = 4;
+      // optional bytes data = 4;
       public boolean hasData() {
         return result.hasData();
       }
@@ -478,6 +601,45 @@ public final class DataProto {
       public Builder clearData() {
         result.hasData = false;
         result.data_ = getDefaultInstance().getData();
+        return this;
+      }
+      
+      // optional .tutorial.DataPacket.ControlCode control = 5;
+      public boolean hasControl() {
+        return result.hasControl();
+      }
+      public edu.uiuc.cs414.group8desktop.DataProto.DataPacket.ControlCode getControl() {
+        return result.getControl();
+      }
+      public Builder setControl(edu.uiuc.cs414.group8desktop.DataProto.DataPacket.ControlCode value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        result.hasControl = true;
+        result.control_ = value;
+        return this;
+      }
+      public Builder clearControl() {
+        result.hasControl = false;
+        result.control_ = edu.uiuc.cs414.group8desktop.DataProto.DataPacket.ControlCode.UP;
+        return this;
+      }
+      
+      // optional int32 pingid = 6;
+      public boolean hasPingid() {
+        return result.hasPingid();
+      }
+      public int getPingid() {
+        return result.getPingid();
+      }
+      public Builder setPingid(int value) {
+        result.hasPingid = true;
+        result.pingid_ = value;
+        return this;
+      }
+      public Builder clearPingid() {
+        result.hasPingid = false;
+        result.pingid_ = 0;
         return this;
       }
       
@@ -822,13 +984,17 @@ public final class DataProto {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\ndata.proto\022\010tutorial\"\224\001\n\nDataPacket\022\021\n" +
+      "\n\ndata.proto\022\010tutorial\"\244\002\n\nDataPacket\022\021\n" +
       "\ttimestamp\030\001 \002(\003\022\022\n\nservertime\030\002 \002(\003\022-\n\004" +
       "type\030\003 \002(\0162\037.tutorial.DataPacket.PacketT" +
-      "ype\022\014\n\004data\030\004 \002(\014\"\"\n\nPacketType\022\t\n\005VIDEO" +
-      "\020\000\022\t\n\005AUDIO\020\001\"+\n\rControlPacket\"\032\n\013Contro" +
-      "lType\022\013\n\007DEFAULT\020\000B)\n\034edu.uiuc.cs414.gro" +
-      "up8desktopB\tDataProto"
+      "ype\022\014\n\004data\030\004 \001(\014\0221\n\007control\030\005 \001(\0162 .tut" +
+      "orial.DataPacket.ControlCode\022\016\n\006pingid\030\006" +
+      " \001(\005\"9\n\nPacketType\022\t\n\005VIDEO\020\000\022\t\n\005AUDIO\020\001" +
+      "\022\013\n\007CONTROL\020\002\022\010\n\004PING\020\003\"4\n\013ControlCode\022\006" +
+      "\n\002UP\020\000\022\010\n\004DOWN\020\001\022\010\n\004LEFT\020\002\022\t\n\005RIGHT\020\003\"+\n" +
+      "\rControlPacket\"\032\n\013ControlType\022\013\n\007DEFAULT" +
+      "\020\000B)\n\034edu.uiuc.cs414.group8desktopB\tData",
+      "Proto"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -840,7 +1006,7 @@ public final class DataProto {
           internal_static_tutorial_DataPacket_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_tutorial_DataPacket_descriptor,
-              new java.lang.String[] { "Timestamp", "Servertime", "Type", "Data", },
+              new java.lang.String[] { "Timestamp", "Servertime", "Type", "Data", "Control", "Pingid", },
               edu.uiuc.cs414.group8desktop.DataProto.DataPacket.class,
               edu.uiuc.cs414.group8desktop.DataProto.DataPacket.Builder.class);
           internal_static_tutorial_ControlPacket_descriptor =
