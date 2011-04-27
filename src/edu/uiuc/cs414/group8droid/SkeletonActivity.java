@@ -33,7 +33,6 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ImageView;
 import edu.uiuc.cs414.group8droid.R;
 
 /**
@@ -50,7 +49,7 @@ public class SkeletonActivity
     static final private String TAG = "Eightdroid";
     SurfaceHolder holder;
     MediaPlayer mp;
-    ImageView mVideoDisplay;
+    SurfaceView mPreview;
 
     LinkedBlockingQueue<FrameQueue> dataQueue;
     LinkedBlockingQueue<FrameQueue> audioQueue;
@@ -67,8 +66,19 @@ public class SkeletonActivity
 
         // Inflate our UI from its XML layout description.
         setContentView(R.layout.skeleton_activity);
+        Log.d(TAG, "in UI setup");
         // Our MediaPlayer will stream the video to this VideoView
-        mVideoDisplay = ((ImageView) findViewById(R.id.streamingVideo));
+        mPreview = ((SurfaceView) findViewById(R.id.streamingVideo));
+        holder = mPreview.getHolder();
+        holder.addCallback(this);
+        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        
+        StreamHandler handler = new StreamHandler(videoQueue, audioQueue, dataQueue);
+        Thread tcpThread = new Thread(handler);
+        tcpThread.start();
+        Log.d(TAG, "after start");
+        //Thread videoThread = new Thread(new VideoHandler(,videoQueue));
+        //Thread audioThread = new
     }
 
     /**
@@ -136,14 +146,14 @@ public class SkeletonActivity
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-		mp = MediaPlayer.create(this, R.raw.sample_mpeg4);
-        mp.setOnErrorListener(this);
-        mp.setOnBufferingUpdateListener(this);
-        mp.setOnCompletionListener(this);
-        mp.setOnPreparedListener(this);
-        mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        mp.setDisplay(holder);
-        Log.d(TAG, "Video Height: " + mp.getVideoHeight() + ", Width: " + mp.getVideoWidth());
+		//mp = MediaPlayer.create(this, R.raw.sample_mpeg4);
+        //mp.setOnErrorListener(this);
+        //mp.setOnBufferingUpdateListener(this);
+        //mp.setOnCompletionListener(this);
+        //mp.setOnPreparedListener(this);
+        //mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        //mp.setDisplay(holder);
+        //Log.d(TAG, "Video Height: " + mp.getVideoHeight() + ", Width: " + mp.getVideoWidth());
 	}
 
 	@Override
@@ -160,8 +170,8 @@ public class SkeletonActivity
 
 	@Override
 	public void onPrepared(MediaPlayer mp) {
-		holder.setFixedSize(mp.getVideoWidth(), mp.getVideoHeight());
-        mp.start();
+		//holder.setFixedSize(mp.getVideoWidth(), mp.getVideoHeight());
+        //mp.start();
 	}
 
 	@Override
@@ -178,11 +188,12 @@ public class SkeletonActivity
 
 	@Override
 	public boolean onError(MediaPlayer mp, int what, int extra) {
-		Log.e(TAG, "onError--->   what:" + what + "    extra:" + extra);
-        if (mp != null) {
-            mp.stop();
-            mp.release();
-        }
+		//Log.e(TAG, "onError--->   what:" + what + "    extra:" + extra);
+        //if (mp != null) {
+        //    mp.stop();
+        //    mp.release();
+        //}
+		//return false;
 		return false;
 	}
 }

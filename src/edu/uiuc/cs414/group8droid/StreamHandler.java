@@ -84,12 +84,12 @@ public class StreamHandler implements Runnable {
 			Log.d(TAG, "Read "+totalBytesRead+" Bytes out of size "+curFrame.size);
 			
 			// Enqueue frame in corresponding queue
-			if(curFrame.flags == videoFlag)
-				videoQueue.add(curFrame);
-			else if(curFrame.flags == audioFlag)
-				audioQueue.add(curFrame);
-			else if(curFrame.flags == controlFlag)
-				controlQueue.add(curFrame);
+			//if(curFrame.flags == videoFlag)
+				//videoQueue.add(curFrame);
+			//else if(curFrame.flags == audioFlag)
+				//audioQueue.add(curFrame);
+			//else if(curFrame.flags == controlFlag)
+				//controlQueue.add(curFrame);
 		}
 	}
 	
