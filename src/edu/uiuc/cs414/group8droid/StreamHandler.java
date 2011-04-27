@@ -6,9 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Date;
-import java.util.Queue;
 
-import android.app.Activity;
 import android.util.Log;
 import edu.uiuc.cs414.group8desktop.DataProto.DataPacket;
 
@@ -74,10 +72,10 @@ public class StreamHandler implements Runnable {
 				if (pkt.getType() == DataPacket.PacketType.VIDEO) {
 					parent.videoHandler.queueFrame(pkt);
 				}
-					/*else if (pkt.getType() == DataPacket.PacketType.AUDIO) {
-						Log.d("Eightdroid", "Queued an audio packet!");
-						audioQueue.add(pkt);
-					}*/
+				else if (pkt.getType() == DataPacket.PacketType.AUDIO) {
+					Log.d("Eightdroid", "Queued an audio packet!");
+					parent.audioHandler.queueFrame(pkt);
+				}
 			} catch (IOException e) {
 				Log.e("Eightdroid", "IOException in receiving the packet. Message: " + e.getStackTrace());
 				close();
