@@ -43,6 +43,7 @@ public class SkeletonActivity
     public ImageView mVideoDisplay;
     public StreamHandler stream;
     public VideoHandler videoHandler;
+    public AudioHandler audioHandler;
     
     Queue<DataPacket> audioQueue;
     Queue<DataPacket> videoQueue;
@@ -73,16 +74,19 @@ public class SkeletonActivity
         
         setContentView(R.layout.video_view);
         mVideoDisplay = ((ImageView) findViewById(R.id.streamingVideo));
-        
-        audioQueue = new LinkedBlockingQueue<DataPacket>();
-        videoQueue = new LinkedBlockingQueue<DataPacket>();
 
-        stream = new StreamHandler(this);
-        (new Thread(stream)).start();
-        
+        audioQueue = new LinkedBlockingQueue<DataPacket>(10);
+        videoQueue = new LinkedBlockingQueue<DataPacket>(10);
+
         videoHandler = new VideoHandler(this);
         (new Thread(videoHandler)).start();
+
+        audioHandler = new AudioHandler(this);
+        (new Thread(audioHandler)).start();
         
+        stream = new StreamHandler(this);
+        (new Thread(stream)).start();
+
     }
     /**
      * Called when the activity is about to start interacting with the user.
