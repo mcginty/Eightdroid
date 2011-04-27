@@ -20,64 +20,77 @@ public class StreamHandler implements Runnable {
     DataOutputStream output;
     LinkedBlockingQueue<FrameQueue> videoQueue;
     LinkedBlockingQueue<FrameQueue> audioQueue;
+    LinkedBlockingQueue<FrameQueue> controlQueue;
+    
     byte[] dataBuffer;
     final static int streamPort = 3827;
-    final static String serverIP = "127.0.0.1";
+    final static String serverIP = "192.17.248.215";
     final static byte videoFlag = 0x01;
     final static byte audioFlag = 0x02;
+    final static byte controlFlag = 0x03;
+    static final private String TAG = "Eightdroid";
     
-    public StreamHandler(LinkedBlockingQueue<FrameQueue> vidQueue, LinkedBlockingQueue<FrameQueue> audioQueue){
+    public StreamHandler(LinkedBlockingQueue<FrameQueue> vidQueue,
+    					 LinkedBlockingQueue<FrameQueue> audioQueue,
+    					 LinkedBlockingQueue<FrameQueue> controlQueue){
     	this.videoQueue = vidQueue;
     	this.audioQueue = audioQueue;
+    	this.controlQueue = controlQueue;
     }
 	public void run() {
+		Log.d(TAG, "entered streamhandler");
         try {
 			sock = new Socket(serverIP, streamPort);
 			input = new DataInputStream(sock.getInputStream());
 			output = new DataOutputStream(sock.getOutputStream());
-			readStream();
+			//readStream();
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			Log.e(TAG, "unknown host");
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.e(TAG, "IO fail on socket connection");
 		}
 	}
 	
 	public void readStream() {
-		// Read header
-		FrameQueue curFrame = new FrameQueue();
-		try {
-			curFrame.controltime = input.readInt();
-			curFrame.timestamp = input.readInt();
-			curFrame.servertime = input.readDouble();
-			curFrame.size = input.readInt();
-			curFrame.checksum = input.readShort();
-			curFrame.flags = input.readByte();
-		} catch (IOException e) {
-			Log.e("Eightdroid", "Failed to read header from server");
-			e.printStackTrace();
-		}
-
-		// Read data
-		int totalBytesRead = 0;
-		int curBytesRead = 0;
-		dataBuffer = new byte[curFrame.size];
-		do {
+		Log.d(TAG, "Entered read stream");
+		while(true){
+			// Read header
+			FrameQueue curFrame = new FrameQueue();
 			try {
-				curBytesRead = input.read(dataBuffer, totalBytesRead, curFrame.size - totalBytesRead);
+				curFrame.controltime = input.readInt();
+				curFrame.timestamp = input.readInt();
+				curFrame.servertime = input.readDouble();
+				curFrame.size = input.readInt();
+				curFrame.checksum = input.readShort();
+				curFrame.flags = input.readByte();
 			} catch (IOException e) {
-				Log.e("Eightdroid", "Failed to read data from server");
-				e.printStackTrace();
+				Log.e(TAG, "Failed to read header from server");
 			}
-			totalBytesRead += curBytesRead;
+			Log.d(TAG, "Read timestamp"+curFrame.timestamp);
+			Log.d(TAG, "Read flag"+curFrame.flags);
+			// Read data
+			int totalBytesRead = 0;
+			int curBytesRead = 0;
+			dataBuffer = new byte[curFrame.size];
+			do {
+				try {
+					curBytesRead = input.read(dataBuffer, totalBytesRead, curFrame.size - totalBytesRead);
+				} catch (IOException e) {
+					Log.e(TAG, "Failed to read data from server");
+				}
+				totalBytesRead += curBytesRead;
+			}
+			while (totalBytesRead < curFrame.size);
+			Log.d(TAG, "Read "+totalBytesRead+" Bytes out of size "+curFrame.size);
+			
+			// Enqueue frame in corresponding queue
+			if(curFrame.flags == videoFlag)
+				videoQueue.add(curFrame);
+			else if(curFrame.flags == audioFlag)
+				audioQueue.add(curFrame);
+			else if(curFrame.flags == controlFlag)
+				controlQueue.add(curFrame);
 		}
-		while (totalBytesRead < curFrame.size);
-		
-		// Enqueue frame in corresponding queue
-		if(curFrame.flags == videoFlag)
-			videoQueue.add(curFrame);
-		else if(curFrame.flags == audioFlag)
-			audioQueue.add(curFrame);
 	}
 	
 	public void writeStream() {
@@ -96,7 +109,6 @@ public class StreamHandler implements Runnable {
 			output.writeByte(newFrame.flags);
 		} catch (IOException e) {
 			Log.e("Eightdroid", "Failed to write header to server");
-			e.printStackTrace();
 		}
 
 		// Write data
@@ -106,7 +118,6 @@ public class StreamHandler implements Runnable {
 			output.write(dataBuffer, 0, newFrame.size);
 		} catch (IOException e) {
 			Log.e("Eightdroid", "Failed to write data to sserver");
-			e.printStackTrace();
 		}
 
 	}
