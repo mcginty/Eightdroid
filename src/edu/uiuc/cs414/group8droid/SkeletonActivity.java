@@ -33,6 +33,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ImageView;
 import edu.uiuc.cs414.group8droid.R;
 
 /**
@@ -49,7 +50,7 @@ public class SkeletonActivity
     static final private String TAG = "Eightdroid";
     SurfaceHolder holder;
     MediaPlayer mp;
-    SurfaceView mPreview;
+    ImageView mVideoDisplay;
 
     LinkedBlockingQueue<FrameQueue> dataQueue;
     LinkedBlockingQueue<FrameQueue> audioQueue;
@@ -67,10 +68,7 @@ public class SkeletonActivity
         // Inflate our UI from its XML layout description.
         setContentView(R.layout.skeleton_activity);
         // Our MediaPlayer will stream the video to this VideoView
-        mPreview = ((SurfaceView) findViewById(R.id.streamingVideo));
-        holder = mPreview.getHolder();
-        holder.addCallback(this);
-        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        mVideoDisplay = ((ImageView) findViewById(R.id.streamingVideo));
     }
 
     /**

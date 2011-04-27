@@ -28,7 +28,7 @@
     <!-- Next view is another linear layout manager, now horizontal.  We
          give it a custom background; see colors.xml for the definition
          of drawable/semi_black-->
-    <SurfaceView 
+    <ImageView 
     	android:id="@+id/streamingVideo" 
     	android:layout_height="wrap_content" 
     	android:layout_width="fill_parent" 
