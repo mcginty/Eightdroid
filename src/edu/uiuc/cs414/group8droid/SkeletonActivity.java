@@ -18,24 +18,16 @@ package edu.uiuc.cs414.group8droid;
 
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.SynchronousQueue;
-
-import edu.uiuc.cs414.group8desktop.DataProto.DataPacket;
 
 import android.app.Activity;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnBufferingUpdateListener;
-import android.media.MediaPlayer.OnCompletionListener;
-import android.media.MediaPlayer.OnErrorListener;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
+import edu.uiuc.cs414.group8desktop.DataProto.DataPacket;
 
 /**
  * This class provides a basic demonstration of how to write an Android

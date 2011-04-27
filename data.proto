@@ -10,9 +10,20 @@ message DataPacket {
   enum PacketType {
     VIDEO = 0;
     AUDIO = 1;
+    CONTROL = 2;
+    PING = 3;
   }
   required PacketType type = 3;
-  required bytes data = 4;
+  optional bytes data = 4;
+  
+  enum ControlCode {
+  	UP = 0;
+  	DOWN = 1;
+  	LEFT = 2;
+  	RIGHT = 3;
+  }
+  optional ControlCode control = 5;
+  optional int32 pingid = 6;
 }
 
 message ControlPacket {
