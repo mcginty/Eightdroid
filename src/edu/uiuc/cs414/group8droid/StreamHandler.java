@@ -28,7 +28,7 @@ public class StreamHandler implements Runnable {
     final static int MAX_LATENCY_MS = 500;
     
     final static int streamPort = 6666;
-    final static String serverIP = "192.17.255.27";
+    final static String serverIP = "192.17.248.215";
     long initTimestamp;
     
     public StreamHandler(SkeletonActivity parent){

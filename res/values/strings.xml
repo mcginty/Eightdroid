@@ -19,8 +19,8 @@
 
 <resources>
     <!-- Simple strings. -->
-    <string name="skeleton_app">Skeleton App</string>
-    <string name="back">Back</string>
+    <string name="skeleton_app">Eightdroid</string>
+    <string name="exit">Exit</string>
     <string name="clear">Clear</string>
 
     <!-- This is a complex string containing style runs. -->

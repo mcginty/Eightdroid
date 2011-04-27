@@ -26,6 +26,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ImageView;
 import edu.uiuc.cs414.group8desktop.DataProto.DataPacket;
 
@@ -37,7 +38,7 @@ import edu.uiuc.cs414.group8desktop.DataProto.DataPacket;
 public class SkeletonActivity
 		extends Activity {
     
-    static final private int BACK_ID = Menu.FIRST;
+    static final private int EXIT_ID = Menu.FIRST;
     static final private String TAG = "Eightdroid";
     public ImageView mVideoDisplay;
     public StreamHandler stream;
@@ -56,21 +57,33 @@ public class SkeletonActivity
         super.onCreate(savedInstanceState);
 
         // Inflate our UI from its XML layout description.
-        setContentView(R.layout.skeleton_activity);
+        setContentView(R.layout.home_screen);
         Log.d(TAG, "in UI setup");
         // Our MediaPlayer will stream the video to this VideoView
+        
+
+        
+
+
+    }
+
+    public void initStream(View v)
+    {
+        Log.d(TAG,"inside initStream");
+        
+        setContentView(R.layout.video_view);
         mVideoDisplay = ((ImageView) findViewById(R.id.streamingVideo));
         
         audioQueue = new LinkedBlockingQueue<DataPacket>();
         videoQueue = new LinkedBlockingQueue<DataPacket>();
+
+        stream = new StreamHandler(this);
+        (new Thread(stream)).start();
         
         videoHandler = new VideoHandler(this);
         (new Thread(videoHandler)).start();
         
-        stream = new StreamHandler(this);
-        (new Thread(stream)).start();
     }
-
     /**
      * Called when the activity is about to start interacting with the user.
      */
@@ -89,7 +102,7 @@ public class SkeletonActivity
         // We are going to create two menus. Note that we assign them
         // unique integer IDs, labels from our string resources, and
         // given them shortcuts.
-        menu.add(0, BACK_ID, 0, R.string.back).setShortcut('0', 'b');
+        menu.add(0, EXIT_ID, 0, R.string.exit).setShortcut('0', 'b');
 
         return true;
     }
@@ -109,7 +122,7 @@ public class SkeletonActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case BACK_ID:
+        case EXIT_ID:
             finish();
             return true;
         }
