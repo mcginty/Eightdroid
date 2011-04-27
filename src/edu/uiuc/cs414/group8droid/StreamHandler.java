@@ -27,6 +27,7 @@ public class StreamHandler implements Runnable {
     Queue<DataPacket> videoQueue;
     Queue<DataPacket> audioQueue;
     byte[] dataBuffer;
+    final static String TAG = "Eightdroid";
     final static int streamPort = 6666;
     final static String serverIP = "192.17.255.27";
     
@@ -42,9 +43,9 @@ public class StreamHandler implements Runnable {
 			output = new ObjectOutputStream(sock.getOutputStream());
 			readStream();
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			Log.e(TAG, "unknown host");
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.e(TAG, "IO fail on socket connection");
 		}
 	}
 	

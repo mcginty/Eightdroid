@@ -35,7 +35,11 @@ import android.view.MenuItem;
 import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.View.OnClickListener;
+<<<<<<< HEAD
 import android.widget.ImageView;
+=======
+import edu.uiuc.cs414.group8droid.R;
+>>>>>>> d07c62bcfceb94821c9077d55f3f5dac9ecf7efc
 
 /**
  * This class provides a basic demonstration of how to write an Android
@@ -47,8 +51,14 @@ public class SkeletonActivity
     
     static final private int BACK_ID = Menu.FIRST;
     static final private String TAG = "Eightdroid";
+<<<<<<< HEAD
     ImageView mVideoDisplay;
     StreamHandler stream;
+=======
+    SurfaceHolder holder;
+    MediaPlayer mp;
+    SurfaceView mPreview;
+>>>>>>> d07c62bcfceb94821c9077d55f3f5dac9ecf7efc
 
     Queue<DataPacket> audioQueue;
     Queue<DataPacket> videoQueue;
@@ -64,13 +74,28 @@ public class SkeletonActivity
 
         // Inflate our UI from its XML layout description.
         setContentView(R.layout.skeleton_activity);
+        Log.d(TAG, "in UI setup");
         // Our MediaPlayer will stream the video to this VideoView
+<<<<<<< HEAD
         mVideoDisplay = ((ImageView) findViewById(R.id.streamingVideo));
         
         audioQueue = new LinkedBlockingQueue<DataPacket>();
         videoQueue = new LinkedBlockingQueue<DataPacket>();
         stream = new StreamHandler(audioQueue, videoQueue);
         (new Thread(stream)).start();
+=======
+        mPreview = ((SurfaceView) findViewById(R.id.streamingVideo));
+        holder = mPreview.getHolder();
+        holder.addCallback(this);
+        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        
+        StreamHandler handler = new StreamHandler(videoQueue, audioQueue, dataQueue);
+        Thread tcpThread = new Thread(handler);
+        tcpThread.start();
+        Log.d(TAG, "after start");
+        //Thread videoThread = new Thread(new VideoHandler(,videoQueue));
+        //Thread audioThread = new
+>>>>>>> d07c62bcfceb94821c9077d55f3f5dac9ecf7efc
     }
 
     /**
@@ -135,4 +160,60 @@ public class SkeletonActivity
         public void onClick(View v) {
         }
     };
+<<<<<<< HEAD
+=======
+
+	@Override
+	public void surfaceCreated(SurfaceHolder holder) {
+		//mp = MediaPlayer.create(this, R.raw.sample_mpeg4);
+        //mp.setOnErrorListener(this);
+        //mp.setOnBufferingUpdateListener(this);
+        //mp.setOnCompletionListener(this);
+        //mp.setOnPreparedListener(this);
+        //mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        //mp.setDisplay(holder);
+        //Log.d(TAG, "Video Height: " + mp.getVideoHeight() + ", Width: " + mp.getVideoWidth());
+	}
+
+	@Override
+	public void surfaceChanged(SurfaceHolder holder, int format, int width,
+			int height) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void surfaceDestroyed(SurfaceHolder holder) {
+
+	}
+
+	@Override
+	public void onPrepared(MediaPlayer mp) {
+		//holder.setFixedSize(mp.getVideoWidth(), mp.getVideoHeight());
+        //mp.start();
+	}
+
+	@Override
+	public void onCompletion(MediaPlayer mp) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onBufferingUpdate(MediaPlayer mp, int percent) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean onError(MediaPlayer mp, int what, int extra) {
+		//Log.e(TAG, "onError--->   what:" + what + "    extra:" + extra);
+        //if (mp != null) {
+        //    mp.stop();
+        //    mp.release();
+        //}
+		//return false;
+		return false;
+	}
+>>>>>>> d07c62bcfceb94821c9077d55f3f5dac9ecf7efc
 }
