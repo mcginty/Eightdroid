@@ -42,8 +42,8 @@ public class SkeletonActivity
     static final private String TAG = "Eightdroid";
     public ImageView mVideoDisplay;
     public StreamHandler stream;
-    public VideoHandler videoHandler;
-    public AudioHandler audioHandler;
+    //public VideoHandler videoHandler;
+    //public AudioHandler audioHandler;
     
     Queue<DataPacket> audioQueue;
     Queue<DataPacket> videoQueue;
@@ -77,12 +77,6 @@ public class SkeletonActivity
 
         audioQueue = new LinkedBlockingQueue<DataPacket>(10);
         videoQueue = new LinkedBlockingQueue<DataPacket>(10);
-
-        videoHandler = new VideoHandler(this);
-        (new Thread(videoHandler)).start();
-
-        audioHandler = new AudioHandler(this);
-        (new Thread(audioHandler)).start();
         
         stream = new StreamHandler(this);
         (new Thread(stream)).start();

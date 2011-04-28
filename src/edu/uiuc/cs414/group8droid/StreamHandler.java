@@ -26,8 +26,11 @@ public class StreamHandler implements Runnable {
     final static int MAX_LATENCY_MS = 500;
     
     final static int streamPort = 6666;
-    final static String serverIP = "192.17.248.215";
+    final static String serverIP = "192.17.252.150";
     long initTimestamp;
+    
+    public VideoHandler videoHandler;
+    public AudioHandler audioHandler;
     
     public StreamHandler(SkeletonActivity parent){
     	this.parent = parent;
@@ -40,6 +43,14 @@ public class StreamHandler implements Runnable {
 				sock = new Socket(serverIP, streamPort);
 				input = new ObjectInputStream(sock.getInputStream());
 				//output = new ObjectOutputStream(sock.getOutputStream());
+				
+				// Spawn audio and video worker threads
+		        videoHandler = new VideoHandler(parent);
+		        (new Thread(videoHandler)).start();
+
+		        audioHandler = new AudioHandler(parent);
+		        (new Thread(audioHandler)).start();
+				
 				Log.d(TAG, "Successfully connected to server.");
 				readStream();
 			} catch (UnknownHostException e) {
@@ -70,11 +81,11 @@ public class StreamHandler implements Runnable {
 					initTimestamp = (new Date()).getTime();
 				Log.d("Eightdroid", "Latency: " + ((pkt.getTimestamp() - ((new Date()).getTime() - initTimestamp))));
 				if (pkt.getType() == DataPacket.PacketType.VIDEO) {
-					parent.videoHandler.queueFrame(pkt);
+					videoHandler.queueFrame(pkt); // modified from parent
 				}
 				else if (pkt.getType() == DataPacket.PacketType.AUDIO) {
 					Log.d("Eightdroid", "Queued an audio packet!");
-					parent.audioHandler.queueFrame(pkt);
+					audioHandler.queueFrame(pkt); //modified from parent
 				}
 			} catch (IOException e) {
 				Log.e("Eightdroid", "IOException in receiving the packet. Message: " + e.getStackTrace());
