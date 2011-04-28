@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2007 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+  
+          http://www.apache.org/licenses/LICENSE-2.0
+  
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<!-- This file describes the layout of the main SkeletonApp activity
+     user interface.
+ -->
+
+<!-- The top view is a layout manager that places its child views into
+     a row, here set to be vertical (so the first is at the top) -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent" android:gravity="center">
+
+    <EditText
+        android:id="@+id/ipaddr"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/editbox_background"
+        android:layout_width="200px"
+        android:textSize="24sp"
+        android:layout_marginBottom="10sp"
+        android:layout_alignParentRight="true"/>
+    <EditText
+        android:id="@+id/port"
+        android:layout_width="200px"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/editbox_background"
+        android:layout_below="@id/ipaddr"
+        android:textSize="24sp"
+        android:layout_marginBottom="15sp"
+        android:layout_alignParentRight="true"/>
+    <TextView
+        android:id="@+id/text_ip"
+        android:layout_height="wrap_content"
+        android:text="IP address:"
+        android:layout_width="wrap_content"
+        android:layout_below="@id/ipaddr"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginTop="5sp"
+        android:layout_marginRight="8sp"
+        android:layout_toLeftOf="@id/ipaddr"/>
+    <TextView
+        android:id="@+id/text_port"
+        android:layout_height="wrap_content"
+        android:text="Port:"
+        android:layout_width="wrap_content"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginTop="5sp"
+        android:layout_marginRight="8sp"
+        android:layout_toLeftOf="@id/port"/>
+    <Button
+   		android:text="Quit"
+        android:id="@+id/quit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/port"
+        android:textSize="24sp"
+        android:layout_marginRight="10sp"
+        android:layout_alignParentRight="true"/>
+    <Button
+    	android:onClick="initStream"
+    	android:text="Connect"
+    	android:id="@+id/connect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/port"
+        android:textSize="24sp"
+        android:layout_marginRight="15sp"
+        android:layout_toLeftOf="@id/quit"
+         />
+</RelativeLayout>
+
+
