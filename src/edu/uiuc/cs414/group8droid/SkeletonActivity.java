@@ -24,10 +24,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import edu.uiuc.cs414.group8desktop.DataProto.ControlPacket;
 import edu.uiuc.cs414.group8desktop.DataProto.DataPacket;
 
 /**
@@ -40,8 +45,15 @@ public class SkeletonActivity
     
     static final private int EXIT_ID = Menu.FIRST;
     static final private String TAG = "Eightdroid";
+
     public ImageView mVideoDisplay;
     public StreamHandler stream;
+    
+    // Gesture data
+    public mGesture curGesture;
+    float startx = 0, starty = 0, endx = 0, endy = 0;
+    
+    
     //public VideoHandler videoHandler;
     //public AudioHandler audioHandler;
     
@@ -49,32 +61,31 @@ public class SkeletonActivity
     Queue<DataPacket> videoQueue;
     boolean active;
 
-    public SkeletonActivity() {
-    }
+    //public SkeletonActivity() {
+    //}
 
     /** Called with the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        
         // Inflate our UI from its XML layout description.
+        //setContentView(R.layout.video_view);
         setContentView(R.layout.home_screen);
-        Log.d(TAG, "in UI setup");
-        // Our MediaPlayer will stream the video to this VideoView
-        
-
-        
-
-
+        Log.d("UI", "in UI setup");
     }
 
     public void initStream(View v)
     {
-        Log.d(TAG,"inside initStream");
+        Log.d("UI","inside initStream");
         
         setContentView(R.layout.video_view);
         mVideoDisplay = ((ImageView) findViewById(R.id.streamingVideo));
 
+        mVideoDisplay.setOnTouchListener(mTouchListener);
+        
+        Log.d("UI", "Set Touch Listener");
         audioQueue = new LinkedBlockingQueue<DataPacket>(10);
         videoQueue = new LinkedBlockingQueue<DataPacket>(10);
         
@@ -82,6 +93,74 @@ public class SkeletonActivity
         (new Thread(stream)).start();
 
     }
+    
+    private enum mGesture { UP, DOWN, LEFT, RIGHT, NULL };
+	
+    private OnTouchListener mTouchListener = new OnTouchListener() {
+    	@ Override
+	public boolean onTouch(View v, MotionEvent event) {
+		
+		//Log.d("UI", "inside onTouch");
+		
+		
+		
+		//ControlPacket curGesture = mGesture.NULL;
+		//ControlPacket control;
+		//control.
+		
+		switch (event.getAction()) {
+		case MotionEvent.ACTION_DOWN:
+		{
+			startx = event.getX();
+			Log.d("UI", "Startx: "+startx);
+			starty = event.getY();
+			Log.d("UI", "Starty: "+starty);
+			break;
+		}
+		case MotionEvent.ACTION_UP:
+		{
+			endx = event.getX()-startx;
+			Log.d("UI", "Endx: "+endx);
+			endy = event.getY()-starty;
+			Log.d("UI", "Endy: "+endy);
+			if (endx < 0){
+				if (endy > 0) {
+					if (Math.abs(endy) > Math.abs(endx))
+						curGesture = mGesture.DOWN;
+					else
+						curGesture = mGesture.LEFT;
+				}
+				else if (endy < 0) {
+					if (Math.abs(endy) > Math.abs(endx))
+						curGesture = mGesture.UP;
+					else
+						curGesture = mGesture.LEFT;
+				}
+			}
+			else if (endx > 0) {
+				if (endy > 0) {
+					if (Math.abs(endy) > Math.abs(endx))
+						curGesture = mGesture.DOWN;
+					else
+						curGesture = mGesture.RIGHT;
+				}
+				else if (endy < 0){
+					if (Math.abs(endy) > Math.abs(endx))
+						curGesture = mGesture.UP;
+					else
+						curGesture = mGesture.RIGHT;
+				}				
+			}
+		Log.d("UI", "got gesture"+curGesture);	
+		break;
+		}
+
+		}
+		
+		return true;
+	}
+    };
+    
     /**
      * Called when the activity is about to start interacting with the user.
      */
@@ -133,7 +212,7 @@ public class SkeletonActivity
      */
     OnClickListener mBackListener = new OnClickListener() {
         public void onClick(View v) {
-            finish();
+            //finish();
         }
     };
 
@@ -144,4 +223,5 @@ public class SkeletonActivity
         public void onClick(View v) {
         }
     };
+
 }
