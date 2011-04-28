@@ -30,4 +30,11 @@ message ControlPacket {
   enum ControlType {
   	DEFAULT = 0;
   }
+    enum ControlCode {
+  	UP = 0;
+  	DOWN = 1;
+  	LEFT = 2;
+  	RIGHT = 3;
+  }
+  required ControlCode control = 1;
 }
