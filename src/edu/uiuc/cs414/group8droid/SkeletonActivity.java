@@ -327,12 +327,14 @@ public class SkeletonActivity
 						curCode = ControlCode.RIGHT;
 				}				
 			}
-		Log.d("UI", "got gesture"+curCode);	
-		ControlPacket remoteCtrl = ControlPacket.newBuilder()
-								   .setType(ControlType.REMOTE)
-								   .setControl(curCode)
-								   .build();
-		control.queuePacket(remoteCtrl);
+		if (curCode != null) {
+			Log.d("UI", "got gesture"+curCode);	
+			ControlPacket remoteCtrl = ControlPacket.newBuilder()
+									   .setType(ControlType.REMOTE)
+									   .setControl(curCode)
+									   .build();
+			control.queuePacket(remoteCtrl);
+		}
 		break;
 		}
 
@@ -426,7 +428,8 @@ public class SkeletonActivity
 		//RecordPreviewCallback rpc = new RecordPreviewCallback(this);
 		Parameters params = mCamera.getParameters();
 		params.setPreviewFrameRate(5);
-		params.setPreviewFormat(ImageFormat.JPEG);
+		//params.setPreviewFormat(ImageFormat.RGB_565);
+		Log.d("UI", "Preview size: " + params.getPreviewSize().width + "x" + params.getPreviewSize().height);
 		mCamera.setParameters(params);
 		//mCamera.setPreviewCallback(rpc);
 		mCamera.setDisplayOrientation(90);

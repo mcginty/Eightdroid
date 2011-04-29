@@ -53,8 +53,10 @@ class RecordPreviewCallback implements PreviewCallback {
 		DataPacket proto = DataPacket.newBuilder()
 			.setTimestamp((new Date()).getTime())
 			.setServertime((new Date()).getTime())
-			.setType(PacketType.AUDIO)
+			.setType(PacketType.VIDEO)
 			.setData(buf).build();
+		
+		parent.outnet.queuePacket(proto);
 		
 		Log.d("Eightdroid", "PreviewFrame compressed to a packet of size: " + proto.getSerializedSize());
 	}

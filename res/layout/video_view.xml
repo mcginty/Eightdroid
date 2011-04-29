@@ -28,7 +28,7 @@
 
     <ImageView 
     	android:id="@+id/streamingVideo" 
-    	android:layout_height="fill_parent" 
+    	android:layout_height="250dip" 
     	android:layout_width="fill_parent" 
     	android:paddingTop="10dip" />
     	
@@ -36,7 +36,7 @@
     	android:id="@+id/previewSurface"
     	android:layout_width="150dip"
     	android:layout_height="200dip"
-    	android:layout_gravity="bottom|right" />
+    	android:layout_gravity="bottom|center" />
     
 </FrameLayout>
 
