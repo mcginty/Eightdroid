@@ -1,5 +1,6 @@
 package edu.uiuc.cs414.group8droid;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -7,10 +8,14 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Date;
+import java.util.Queue;
+import java.util.TimerTask;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import android.util.Log;
 import edu.uiuc.cs414.group8desktop.DataProto.ControlPacket;
 import edu.uiuc.cs414.group8desktop.DataProto.DataPacket;
+import edu.uiuc.cs414.group8desktop.DataProto.ControlPacket.ControlType;
 
 public class ControlHandler implements Runnable {
     /**
@@ -20,22 +25,24 @@ public class ControlHandler implements Runnable {
 	boolean done = false;
 	boolean isConnected = false;
     Socket sock;
-    ObjectInputStream input;
+    DataInputStream input;
     DataOutputStream output;
     SkeletonActivity parent;
+    private Queue<ControlPacket> sendQueue;
     
     final static int controlPort = 6667;
     final static String serverIP = "192.17.252.150";
     
     public ControlHandler(SkeletonActivity parent){
     	this.parent = parent;
+    	sendQueue = new LinkedBlockingQueue<ControlPacket>(10);
     }
 	public void run() {
 		Log.d("Control", "ControlHandler running...");
         while (true) {
         	try {
 				sock = new Socket(serverIP, controlPort);
-				//input = new ObjectInputStream(sock.getInputStream());
+				input = new DataInputStream(sock.getInputStream());
 				output = new DataOutputStream(sock.getOutputStream());
 				
 				isConnected = true;
@@ -54,22 +61,43 @@ public class ControlHandler implements Runnable {
 				//Log.e(TAG, "IO fail on socket connection");
 			}
         }
+		while (true) {
+			//System.out.println("Attempting write of bytes.");
+			if (!sendQueue.isEmpty()) {
+				try {
+					ControlPacket pkt = sendQueue.poll();
+					int size = pkt.getSerializedSize();
+					output.writeInt(size);
+					output.write(pkt.toByteArray());
+					Log.d("Control", "Control pkt sent of size: "+size);
+				} catch (IOException e) {
+					Log.e("Control", "Failed to send control packet");
+				}
+			}
+		}
 	}
-	
-	public void sendRemotePkt(ControlPacket pkt) {
-		Log.d("Control", "Entered sendRemotePkt..");
+
+	public void queuePacket(ControlPacket pkt) {
+		if (sendQueue.size() == 10) {
+			for (int i=0; i<10; i++) sendQueue.remove();
+		}
+		sendQueue.add(pkt);
+	}
+
+	public void sendControlPkt(ControlPacket pkt) {
+		Log.d("Control", "Entered sendControlPkt..");
 		try {
 			if(isConnected()){
 				int size = pkt.getSerializedSize();
 				output.writeInt(size);
 				output.write(pkt.toByteArray());
-				Log.d("Control", "Remote pkt sent of size: "+size);				
+				Log.d("Control", "Control pkt sent of size: "+size);				
 			}
 			else
 				Log.d("Control", "Control not yet connected");
 
 		} catch (IOException e) {
-			Log.e("Control", "Could not send remote packet");
+			Log.e("Control", "Could not send packet");
 		}
 	}
 	

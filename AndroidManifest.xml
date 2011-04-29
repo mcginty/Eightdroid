@@ -40,7 +40,7 @@
              can launch and interact with.  The "name" attribute is the
              name of the class within your package that implements this
              activity. -->
-        <activity android:name="SkeletonActivity" android:screenOrientation="portrait">
+        <activity android:name="SkeletonActivity" android:configChanges="orientation">
 
             <!-- An IntentFilter tells the system when it should use your
                  activity.  This allows the user to get to your activity

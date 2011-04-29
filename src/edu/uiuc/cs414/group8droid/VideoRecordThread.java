@@ -13,6 +13,6 @@ public class VideoRecordThread extends Thread {
 	
 	public void run() {
 		mCamera = Camera.open();
-		mCamera.setPreviewDisplay(R.id.previewSurface);
+		//mCamera.setPreviewDisplay(R.id.previewSurface);
 	}
 }

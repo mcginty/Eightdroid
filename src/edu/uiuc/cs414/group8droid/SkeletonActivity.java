@@ -18,6 +18,8 @@ package edu.uiuc.cs414.group8droid;
 
 import java.util.Date;
 import java.util.Queue;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import android.app.Activity;
@@ -52,6 +54,7 @@ public class SkeletonActivity
     public ImageView mVideoDisplay;
     public StreamHandler stream;
     public ControlHandler control;
+    public Timer pingTimer;
     
     // Gesture data
     float startx = 0, starty = 0, endx = 0, endy = 0;
@@ -104,9 +107,22 @@ public class SkeletonActivity
         
         control = new ControlHandler(this);
         (new Thread(control)).start();
-
+        
+        pingTimer = new Timer();
+        pingTimer.scheduleAtFixedRate(new PingTask(), 0, 10000);   
     }
-	
+
+	private class PingTask extends TimerTask {
+
+		@Override
+		public void run() {
+			ControlPacket pingCtrl = ControlPacket.newBuilder()
+			.setType(ControlType.PING)
+			.build();
+			control.sendControlPkt(pingCtrl);
+		}
+	}
+    
     private OnTouchListener mTouchListener = new OnTouchListener() {
     	@ Override
 	public boolean onTouch(View v, MotionEvent event) {
@@ -162,7 +178,7 @@ public class SkeletonActivity
 								   .setType(ControlType.REMOTE)
 								   .setControl(curCode)
 								   .build();
-		control.sendRemotePkt(remoteCtrl);
+		control.queuePacket(remoteCtrl);
 		break;
 		}
 
