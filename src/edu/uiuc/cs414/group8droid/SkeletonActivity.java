@@ -76,6 +76,7 @@ public class SkeletonActivity
     public ImageView mVideoDisplay;
     public StreamHandler stream;
     public ControlHandler control;
+    public OutStreamHandler outnet;
     public Timer pingTimer;
     public EditText ipEdit;
     public EditText portEdit;
@@ -169,6 +170,9 @@ public class SkeletonActivity
         
         control = new ControlHandler(this);
         (new Thread(control)).start();
+        
+        outnet = new OutStreamHandler(this);
+        (new Thread(outnet)).start();
         
         //mPreviewSurface = ((SurfaceView) findViewById(R.id.previewSurface));
         //mPreviewSurface.getHolder().addCallback(this);
