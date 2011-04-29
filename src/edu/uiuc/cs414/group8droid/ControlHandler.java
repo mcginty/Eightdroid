@@ -93,7 +93,10 @@ public class ControlHandler implements Runnable {
 	}
 	
 	public void sendLatency() {
-		latency = endLatency - (startLatency + delta);
+		Log.d("Control", "Start Latency: "+startLatency);
+		Log.d("Control", "End Latency: "+endLatency);
+		Log.d("Control", "delta: "+delta);
+		latency = endLatency - (startLatency - delta);
 		Log.d("Control", "Sending latency to server...");
 		
 		ControlPacket latencyCtrl = ControlPacket.newBuilder()

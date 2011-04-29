@@ -83,7 +83,7 @@ public class SkeletonActivity
     public EditText serverEdit;
     public String serverIP;
     final static String defaultNameserverPort = "3825";
-    final static String defaultNameserverIP = "192.17.255.225";
+    final static String defaultNameserverIP = "192.17.252.150";
     final static String defaultServerName = "alice";
     
     // Gesture data
@@ -180,7 +180,9 @@ public class SkeletonActivity
         
 
         pingTimer = new Timer();
-        pingTimer.scheduleAtFixedRate(new PingTask(), 0, 10000);   
+        pingTimer.scheduleAtFixedRate(new PingTask(), 0, 24000);
+        pingTimer.scheduleAtFixedRate(new LatencyTask(), 15000, 30000);   
+        
     }
     
 	private String nameserverConnect(String sname, String stype, String nsIP, String nsPort) throws IOException {
@@ -252,10 +254,21 @@ public class SkeletonActivity
 
 		@Override
 		public void run() {
-			ControlPacket pingCtrl = ControlPacket.newBuilder()
-			.setType(ControlType.PING)
-			.build();
-			control.sendPing(pingCtrl);
+			if(control.isConnected() && stream.isConnected()) {
+				ControlPacket pingCtrl = ControlPacket.newBuilder()
+				.setType(ControlType.PING)
+				.build();
+				control.sendPing(pingCtrl);
+			}
+		}
+	}
+	
+	private class LatencyTask extends TimerTask {
+
+		@Override
+		public void run() {
+			if(control.isConnected() && stream.isConnected())
+				control.sendLatency();
 		}
 	}
     

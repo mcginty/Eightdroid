@@ -20,6 +20,7 @@ public class StreamHandler implements Runnable {
      * any kind of HTTP or RTSP streaming for the time being.
      */
 	boolean done = false;
+	boolean isConnected = true;
     Socket sock;
     ObjectInputStream input;
     ObjectOutputStream output;
@@ -58,6 +59,7 @@ public class StreamHandler implements Runnable {
 		        audioHandler = new AudioHandler(parent);
 		        (new Thread(audioHandler)).start();
 				Log.d("Stream", "Successfully connected to server.");
+				isConnected = true;
 
 				readStream();
 			} catch (IOException ee) {
@@ -93,6 +95,10 @@ public class StreamHandler implements Runnable {
 				return;
 			}
 		}
+	}
+	
+	public boolean isConnected() {
+		return isConnected;
 	}
 	
 	public void close() {
