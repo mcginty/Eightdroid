@@ -86,6 +86,9 @@ public class SkeletonActivity
     final static String defaultNameserverIP = "192.17.252.150";
     final static String defaultServerName = "alice";
     
+    long initPhoneStamp;
+    long endPhoneStamp;
+    
     // Gesture data
     float startx = 0, starty = 0, endx = 0, endy = 0;
     
@@ -108,6 +111,8 @@ public class SkeletonActivity
         
         Log.d("UI", "gui thread created");
 
+        initPhoneStamp = 0;
+        endPhoneStamp = 0;
 
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "Eightdroid");
@@ -180,7 +185,7 @@ public class SkeletonActivity
         
 
         pingTimer = new Timer();
-        pingTimer.scheduleAtFixedRate(new PingTask(), 0, 24000);
+        pingTimer.scheduleAtFixedRate(new PingTask(), 12000, 24000);
         pingTimer.scheduleAtFixedRate(new LatencyTask(), 15000, 30000);   
         
     }

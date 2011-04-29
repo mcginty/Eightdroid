@@ -30,6 +30,20 @@ public class VideoHandler implements Runnable {
 		while (true) {
 			if ( !q.isEmpty() ) {
 				packet = q.poll();
+				parent.endPhoneStamp = (new Date()).getTime();
+				long playTimeStamp = parent.endPhoneStamp - parent.initPhoneStamp;
+				Log.d("Video", "playTimeStamp: "+playTimeStamp);
+				long captureTimeStamp = packet.getTimestamp();
+				Log.d("Video", "captureTimeStamp: "+captureTimeStamp);
+				//if(playTimeStamp > captureTimeStamp) {
+				//	
+				//}
+				//else if(playTimeStamp < captureTimeStamp) {
+				//try {
+				//	Thread.sleep(captureTimeStamp - playTimeStamp);
+				//} catch (InterruptedException e) {
+				//	Log.e("Video", "Interrupted video thread during sleep");
+				//}	
 				//Log.d("Video", "Grabbed packet with timestamp " + packet.getTimestamp());
 				byte[] jpeg = packet.getData().toByteArray();
 				final Bitmap imageBuffer = BitmapFactory.decodeByteArray(jpeg, 0, jpeg.length);
@@ -41,6 +55,7 @@ public class VideoHandler implements Runnable {
 				long endLatency = (new Date()).getTime();
 				long startLatency = packet.getServertime();
 				parent.control.setLatencyTime(startLatency, endLatency);
+				//}
 			}
 		}
 	}

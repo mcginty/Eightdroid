@@ -1,5 +1,6 @@
 package edu.uiuc.cs414.group8droid;
 
+import java.util.Date;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -42,6 +43,8 @@ public class AudioHandler implements Runnable {
 				packet = q.poll();
 				//Log.d("Audio", "Grabbed some AUDIO packeterrr with timestamp " + packet.getTimestamp());
 				byte[] audio = packet.getData().toByteArray();
+				if(parent.initPhoneStamp == 0)
+					parent.initPhoneStamp = (new Date()).getTime();
 				audioOut.write(audio, 0, audio.length);
 			}
 		}
