@@ -32,6 +32,7 @@ public class StreamHandler implements Runnable {
     final static int MAX_LATENCY_MS = 500;
     
     final static int streamPort = 6666;
+
     final static int nameserverPort = 3825;
     final static String serverIP = "192.17.252.150";
     final static String nameserverIP = "192.17.255.225";
