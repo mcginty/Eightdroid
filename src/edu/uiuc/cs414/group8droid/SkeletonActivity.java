@@ -20,18 +20,31 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+
 import java.util.Date;
+import java.util.List;
 import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import android.app.Activity;
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.ImageFormat;
+import android.hardware.Camera;
+import android.hardware.Camera.Parameters;
+import android.hardware.Camera.PictureCallback;
+import android.hardware.Camera.ShutterCallback;
+import android.hardware.Camera.Size;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
@@ -52,10 +65,14 @@ import edu.uiuc.cs414.group8desktop.DataProto.DataPacket.PacketType;
  * displays and edits some internal text.
  */
 public class SkeletonActivity
-		extends Activity {
-    
-    static final private int EXIT_ID = Menu.FIRST;
+		extends Activity
+		implements SurfaceHolder.Callback{
+	
+    Camera mCamera;
 
+    static final private int EXIT_ID = Menu.FIRST;
+	private static final String TAG = "Eightdroid";
+    public SurfaceView mPreviewSurface;
     public ImageView mVideoDisplay;
     public StreamHandler stream;
     public ControlHandler control;
@@ -81,6 +98,7 @@ public class SkeletonActivity
 
     //public SkeletonActivity() {
     //}
+    
 
     /** Called with the activity is first created. */
     @Override
@@ -90,6 +108,9 @@ public class SkeletonActivity
         Log.d("UI", "gui thread created");
 
 
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "Eightdroid");
+        wl.acquire();
         
         Log.d("UI", "Edit Texts set");
         
@@ -117,7 +138,6 @@ public class SkeletonActivity
        // SkeletonActivity parent = null;
 	   // audioRecordThread = new AudioRecordThread(parent);
        // (new Thread(audioRecordThread)).start();
-        
     }
 
     public void initStream(View v)
@@ -150,6 +170,11 @@ public class SkeletonActivity
         control = new ControlHandler(this);
         (new Thread(control)).start();
         
+        mPreviewSurface = ((SurfaceView) findViewById(R.id.previewSurface));
+        mPreviewSurface.getHolder().addCallback(this);
+        mPreviewSurface.getHolder().setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        
+
         pingTimer = new Timer();
         pingTimer.scheduleAtFixedRate(new PingTask(), 0, 10000);   
     }
@@ -226,7 +251,7 @@ public class SkeletonActivity
 			ControlPacket pingCtrl = ControlPacket.newBuilder()
 			.setType(ControlType.PING)
 			.build();
-			control.sendControlPkt(pingCtrl);
+			control.sendPing(pingCtrl);
 		}
 	}
     
@@ -357,5 +382,42 @@ public class SkeletonActivity
         public void onClick(View v) {
         }
     };
+
+	@Override
+	public void surfaceCreated(SurfaceHolder holder) {
+		
+		
+	}
+
+	@Override
+	public void surfaceChanged(SurfaceHolder holder, int format, int width,
+			int height) {
+		Log.d(TAG, "Opening camera for recording...");
+        mCamera = Camera.open();
+		try {
+			mCamera.setPreviewDisplay(mPreviewSurface.getHolder());
+		} catch (IOException e) {
+			Log.e(TAG, "Exception when trying to set preview display: " + e.toString());
+		}
+		
+		// Merge here plox
+		//RecordPreviewCallback rpc = new RecordPreviewCallback(this);
+		Parameters params = mCamera.getParameters();
+		params.setPreviewFrameRate(5);
+		params.setPreviewFormat(ImageFormat.JPEG);
+		mCamera.setParameters(params);
+		mCamera.setPreviewCallback(rpc);
+		mCamera.setDisplayOrientation(90);
+		mCamera.startPreview();
+		
+		
+	}
+
+	@Override
+	public void surfaceDestroyed(SurfaceHolder holder) {
+		mCamera.stopPreview();
+		mCamera.unlock();
+		mCamera.release();
+	}
 
 }

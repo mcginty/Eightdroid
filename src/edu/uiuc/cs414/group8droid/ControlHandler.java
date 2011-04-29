@@ -84,14 +84,32 @@ public class ControlHandler implements Runnable {
 		sendQueue.add(pkt);
 	}
 
-	public void sendControlPkt(ControlPacket pkt) {
+	public void sendPing(ControlPacket pkt) {
 		Log.d("Control", "Entered sendControlPkt..");
 		try {
 			if(isConnected()){
+				// Send initial ping request
 				int size = pkt.getSerializedSize();
+				long ping_start = (new Date()).getTime();
 				output.writeInt(size);
 				output.write(pkt.toByteArray());
-				Log.d("Control", "Control pkt sent of size: "+size);				
+				Log.d("Control", "Ping sent of size:"+size+" at time:"+ping_start);
+				
+				// Receive response from ping request
+				size = input.readInt();					
+				byte[] bytes = new byte[size];
+				input.readFully(bytes);
+				long ping_end = (new Date()).getTime();
+				Log.d("Control", "Ping received of size: "+size+" at time:"+ping_end);
+				ControlPacket serverPkt = ControlPacket.parseFrom(bytes);
+				long servertime = serverPkt.getServertime();
+				
+				// Do delta calculation
+				long rtt = ping_end-ping_start;
+				long delta = servertime-(ping_start+rtt/2);
+				Log.d("Control", "Delta calculated as:"+delta);
+				
+				
 			}
 			else
 				Log.d("Control", "Control not yet connected");

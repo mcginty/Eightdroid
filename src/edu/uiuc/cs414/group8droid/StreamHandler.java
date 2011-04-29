@@ -32,7 +32,8 @@ public class StreamHandler implements Runnable {
     final static int MAX_LATENCY_MS = 500;
     
     final static int streamPort = 6666;
-    final static String serverIP = "192.17.255.225";
+//    final static String serverIP = "192.17.255.225";
+
     long initTimestamp;
     
     public VideoHandler videoHandler;
@@ -45,7 +46,7 @@ public class StreamHandler implements Runnable {
     }
 	
     public void run() {
-		Log.d("Eightdroid", "StreamHandler running...");
+		Log.d("Stream", "StreamHandler running...");
 		while (true) {
         	try {				
         		sock = new Socket(parent.serverIP, streamPort);
