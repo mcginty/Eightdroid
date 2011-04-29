@@ -16,6 +16,10 @@
 
 package edu.uiuc.cs414.group8droid;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
 import java.util.Date;
 import java.util.Queue;
 import java.util.Timer;
@@ -32,6 +36,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -55,6 +60,13 @@ public class SkeletonActivity
     public StreamHandler stream;
     public ControlHandler control;
     public Timer pingTimer;
+    public EditText ipEdit;
+    public EditText portEdit;
+    public EditText serverEdit;
+    public String serverIP;
+    final static String defaultNameserverPort = "3825";
+    final static String defaultNameserverIP = "192.17.255.225";
+    final static String defaultServerName = "alice";
     
     // Gesture data
     float startx = 0, starty = 0, endx = 0, endy = 0;
@@ -74,24 +86,54 @@ public class SkeletonActivity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        Log.d("UI", "gui thread created");
 
+
+        
+        Log.d("UI", "Edit Texts set");
         
         // Inflate our UI from its XML layout description.
         //setContentView(R.layout.video_view);
         setContentView(R.layout.home_screen);
+
+
+        ipEdit = (EditText)findViewById(R.id.ipaddr);
+        portEdit = (EditText)findViewById(R.id.port);
+        serverEdit = (EditText)findViewById(R.id.server);
+        
+        Log.d("UI", "EditTexts hooked");
+        
+        //ipEdit.setText(nameserverIP);
+        ipEdit.setHint("Nameserver");
+        portEdit.setHint("Port");
+        serverEdit.setHint("Server Name");
+        //portEdit.setText("3825");
+        
         Log.d("UI", "in UI setup");
         
-        AudioRecordThread audioRecordThread;
-        Log.d("Arecord","About to start the recorder");
-        SkeletonActivity parent = null;
-		audioRecordThread = new AudioRecordThread(parent);
-        (new Thread(audioRecordThread)).start();
+       // AudioRecordThread audioRecordThread;
+       // Log.d("Arecord","About to start the recorder");
+       // SkeletonActivity parent = null;
+	   // audioRecordThread = new AudioRecordThread(parent);
+       // (new Thread(audioRecordThread)).start();
         
     }
 
     public void initStream(View v)
-    {
-        Log.d("UI","inside initStream");
+    {   
+        try {
+			serverIP = nameserverConnect(serverEdit.getText().toString(),"query",ipEdit.getText().toString(),portEdit.getText().toString());
+		} catch (IOException e) {
+			Log.d("nameserver", "nameserver threw IOException");
+			e.printStackTrace();
+		}
+		
+		if(serverIP == ""){
+			Log.e("nameserver", "nameserver did not provide you with a valid IP");
+			return;			
+		}
+
         
         setContentView(R.layout.video_view);
         mVideoDisplay = ((ImageView) findViewById(R.id.streamingVideo));
@@ -110,6 +152,71 @@ public class SkeletonActivity
         
         pingTimer = new Timer();
         pingTimer.scheduleAtFixedRate(new PingTask(), 0, 10000);   
+    }
+    
+	private String nameserverConnect(String sname, String stype, String nsIP, String nsPort) throws IOException {
+		String TrimmedIP;
+	    Socket nssock;
+	    DataInputStream nsinput;
+	    DataOutputStream nsoutput;
+
+		while(true){ //Try again if this was the server's first connection
+			Log.d("nameserver", "Connecting to nameserver");
+			nssock = new Socket(nsIP, Integer.parseInt(nsPort));
+			
+			nsoutput = new DataOutputStream(nssock.getOutputStream());
+			Log.d("nameserver", "nameserver out stream opened");
+			
+			nsinput = new DataInputStream(nssock.getInputStream());
+			Log.d("nameserver", "nameserver in stream opened");
+			
+			byte[] name = new byte[16];
+			byte[] tname = sname.getBytes("US-ASCII");
+			byte[] type = new byte[16];
+			byte[] ttype = stype.getBytes("US-ASCII");
+			byte[] ip = new byte[48];
+			
+			java.lang.System.arraycopy(tname, 0, name, 0, tname.length);
+			java.lang.System.arraycopy(ttype, 0, type, 0, ttype.length);
+			
+			Log.d("nameserver", "Nameserver communication started");				
+
+			nsoutput.write(name);
+			nsoutput.write(type);
+			nsinput.readFully(ip);
+			
+			String ServerIP = new String(ip,0,0,48);
+			ServerIP.trim();
+			TrimmedIP = ServerIP.replace("\0", "");
+			
+			Log.d("nameserver", "Nameserver communication completed");
+			
+			Log.d("nameserver", "Server IP: " + TrimmedIP);
+			nssock.close();
+			
+			if(ServerIP.codePointAt(0) == 'x')
+				continue;
+			else
+				break;
+			}
+		if(TrimmedIP.codePointAt(0) == 'z')
+			return "";
+		
+		return TrimmedIP;
+	}
+    
+    public void defaultConfig(View v)
+    {
+    	serverEdit.setText(defaultServerName);
+    	ipEdit.setText(defaultNameserverIP);
+    	portEdit.setText(defaultNameserverPort);
+    }
+    
+    public void clearConfig(View v)
+    {
+    	serverEdit.setText("");
+    	ipEdit.setText("");
+    	portEdit.setText("");
     }
 
 	private class PingTask extends TimerTask {

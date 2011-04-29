@@ -31,7 +31,7 @@ public class ControlHandler implements Runnable {
     private Queue<ControlPacket> sendQueue;
     
     final static int controlPort = 6667;
-    final static String serverIP = "192.17.252.150";
+  //  final static String serverIP = "192.17.252.150";
     
     public ControlHandler(SkeletonActivity parent){
     	this.parent = parent;
@@ -41,7 +41,7 @@ public class ControlHandler implements Runnable {
 		Log.d("Control", "ControlHandler running...");
         while (true) {
         	try {
-				sock = new Socket(serverIP, controlPort);
+				sock = new Socket(parent.serverIP, controlPort);
 				input = new DataInputStream(sock.getInputStream());
 				output = new DataOutputStream(sock.getOutputStream());
 				
