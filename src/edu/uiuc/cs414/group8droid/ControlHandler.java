@@ -37,7 +37,6 @@ public class ControlHandler implements Runnable {
     // Latency vars
     private long startLatency;
     private long endLatency;
-    private long delta;
     private long latency;
     
     final static int controlPort = 6667;
@@ -95,8 +94,8 @@ public class ControlHandler implements Runnable {
 	public void sendLatency() {
 		Log.d("Control", "Start Latency: "+startLatency);
 		Log.d("Control", "End Latency: "+endLatency);
-		Log.d("Control", "delta: "+delta);
-		latency = endLatency - (startLatency - delta);
+		Log.d("Control", "delta: "+parent.delta);
+		latency = endLatency - (startLatency - parent.delta);
 		Log.d("Control", "Sending latency to server...");
 		
 		ControlPacket latencyCtrl = ControlPacket.newBuilder()
@@ -146,8 +145,8 @@ public class ControlHandler implements Runnable {
 				
 				// Do delta calculation
 				long rtt = ping_end-ping_start;
-				delta = servertime-(ping_start+rtt/2);
-				Log.d("Control", "Delta calculated as: "+delta);
+				parent.delta = servertime-(ping_start+rtt/2);
+				Log.d("Control", "Delta calculated as: "+parent.delta);
 				
 				
 			}

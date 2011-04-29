@@ -86,8 +86,13 @@ public class SkeletonActivity
     final static String defaultNameserverIP = "192.17.252.150";
     final static String defaultServerName = "alice";
     
+    long delta;
+    
     long initPhoneStamp;
     long endPhoneStamp;
+    
+    long frameCnt = 0;
+    long frameTimer = 0;
     
     // Gesture data
     float startx = 0, starty = 0, endx = 0, endy = 0;
@@ -146,6 +151,15 @@ public class SkeletonActivity
        // (new Thread(audioRecordThread)).start();
     }
 
+    public void updateFrameRate() {
+    	long curTime = (new Date()).getTime();
+    	frameCnt = (frameCnt*1000)/(curTime-frameTimer);
+    	//Log.d("UI","curTime: "+frameCnt);
+    	//Log.d("UI","frameTimer: "+frameCnt);
+    	//Log.d("UI","frameCnt: "+frameCnt);
+    	Log.d("UI","Frame rate: "+frameCnt);
+    }
+    
     public void initStream(View v)
     {   
         try {
@@ -186,7 +200,7 @@ public class SkeletonActivity
 
         pingTimer = new Timer();
         pingTimer.scheduleAtFixedRate(new PingTask(), 12000, 24000);
-        pingTimer.scheduleAtFixedRate(new LatencyTask(), 15000, 30000);   
+        pingTimer.scheduleAtFixedRate(new LatencyTask(), 15000, 10000);   
         
     }
     
