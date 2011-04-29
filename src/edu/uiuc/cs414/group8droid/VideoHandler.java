@@ -1,5 +1,6 @@
 package edu.uiuc.cs414.group8droid;
 
+import java.util.Date;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -37,6 +38,9 @@ public class VideoHandler implements Runnable {
 						parent.mVideoDisplay.setImageBitmap(imageBuffer);
 					}
 				});
+				long endLatency = (new Date()).getTime();
+				long startLatency = packet.getServertime();
+				parent.control.setLatencyTime(startLatency, endLatency);
 			}
 		}
 	}

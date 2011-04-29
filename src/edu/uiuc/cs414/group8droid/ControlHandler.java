@@ -22,13 +22,23 @@ public class ControlHandler implements Runnable {
      * Sockets required to handle our own protocol stuff. We're *not* using
      * any kind of HTTP or RTSP streaming for the time being.
      */
+	
+	// Flags
 	boolean done = false;
 	boolean isConnected = false;
+	
+	// Network vars
     Socket sock;
     DataInputStream input;
     DataOutputStream output;
     SkeletonActivity parent;
     private Queue<ControlPacket> sendQueue;
+    
+    // Latency vars
+    private long startLatency;
+    private long endLatency;
+    private long delta;
+    private long latency;
     
     final static int controlPort = 6667;
     final static String serverIP = "192.17.252.150";
@@ -77,6 +87,33 @@ public class ControlHandler implements Runnable {
 		}
 	}
 
+	public void setLatencyTime(long t1, long t2){
+		startLatency = t1;
+		endLatency = t2;
+	}
+	
+	public void sendLatency() {
+		latency = endLatency - (startLatency + delta);
+		Log.d("Control", "Sending latency to server...");
+		
+		ControlPacket latencyCtrl = ControlPacket.newBuilder()
+		   .setType(ControlType.LATENCY)
+		   .setLatency(latency)
+		   .build();
+		int size = latencyCtrl.getSerializedSize();
+		
+		try {
+			output.writeInt(size);
+			output.write(latencyCtrl.toByteArray());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			Log.e("Control", "Failed to send latency");
+		}
+
+		Log.d("Control", "Latency sent of size: "+size+" with value:"+latency);
+	
+	}
+	
 	public void queuePacket(ControlPacket pkt) {
 		if (sendQueue.size() == 10) {
 			for (int i=0; i<10; i++) sendQueue.remove();
@@ -106,8 +143,8 @@ public class ControlHandler implements Runnable {
 				
 				// Do delta calculation
 				long rtt = ping_end-ping_start;
-				long delta = servertime-(ping_start+rtt/2);
-				Log.d("Control", "Delta calculated as:"+delta);
+				delta = servertime-(ping_start+rtt/2);
+				Log.d("Control", "Delta calculated as: "+delta);
 				
 				
 			}

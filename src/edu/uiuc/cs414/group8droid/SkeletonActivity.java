@@ -128,9 +128,9 @@ public class SkeletonActivity
         control = new ControlHandler(this);
         (new Thread(control)).start();
         
-        mPreviewSurface = ((SurfaceView) findViewById(R.id.previewSurface));
-        mPreviewSurface.getHolder().addCallback(this);
-        mPreviewSurface.getHolder().setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        //mPreviewSurface = ((SurfaceView) findViewById(R.id.previewSurface));
+        //mPreviewSurface.getHolder().addCallback(this);
+        //mPreviewSurface.getHolder().setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         
 
         pingTimer = new Timer();
