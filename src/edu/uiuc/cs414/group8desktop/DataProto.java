@@ -523,6 +523,7 @@ public final class DataProto {
         implements com.google.protobuf.ProtocolMessageEnum {
       REMOTE(0, 0),
       LATENCY(1, 1),
+      PING(2, 2),
       ;
       
       
@@ -532,6 +533,7 @@ public final class DataProto {
         switch (value) {
           case 0: return REMOTE;
           case 1: return LATENCY;
+          case 2: return PING;
           default: return null;
         }
       }
@@ -562,7 +564,7 @@ public final class DataProto {
       }
       
       private static final ControlType[] VALUES = {
-        REMOTE, LATENCY, 
+        REMOTE, LATENCY, PING, 
       };
       public static ControlType valueOf(
           com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
@@ -678,6 +680,13 @@ public final class DataProto {
     public boolean hasLatency() { return hasLatency; }
     public long getLatency() { return latency_; }
     
+    // optional int64 servertime = 4;
+    public static final int SERVERTIME_FIELD_NUMBER = 4;
+    private boolean hasServertime;
+    private long servertime_ = 0L;
+    public boolean hasServertime() { return hasServertime; }
+    public long getServertime() { return servertime_; }
+    
     private void initFields() {
       type_ = edu.uiuc.cs414.group8desktop.DataProto.ControlPacket.ControlType.REMOTE;
       control_ = edu.uiuc.cs414.group8desktop.DataProto.ControlPacket.ControlCode.UP;
@@ -699,6 +708,9 @@ public final class DataProto {
       if (hasLatency()) {
         output.writeInt64(3, getLatency());
       }
+      if (hasServertime()) {
+        output.writeInt64(4, getServertime());
+      }
       getUnknownFields().writeTo(output);
     }
     
@@ -719,6 +731,10 @@ public final class DataProto {
       if (hasLatency()) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(3, getLatency());
+      }
+      if (hasServertime()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(4, getServertime());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -887,6 +903,9 @@ public final class DataProto {
         if (other.hasLatency()) {
           setLatency(other.getLatency());
         }
+        if (other.hasServertime()) {
+          setServertime(other.getServertime());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
@@ -934,6 +953,10 @@ public final class DataProto {
             }
             case 24: {
               setLatency(input.readInt64());
+              break;
+            }
+            case 32: {
+              setServertime(input.readInt64());
               break;
             }
           }
@@ -1001,6 +1024,24 @@ public final class DataProto {
         return this;
       }
       
+      // optional int64 servertime = 4;
+      public boolean hasServertime() {
+        return result.hasServertime();
+      }
+      public long getServertime() {
+        return result.getServertime();
+      }
+      public Builder setServertime(long value) {
+        result.hasServertime = true;
+        result.servertime_ = value;
+        return this;
+      }
+      public Builder clearServertime() {
+        result.hasServertime = false;
+        result.servertime_ = 0L;
+        return this;
+      }
+      
       // @@protoc_insertion_point(builder_scope:tutorial.ControlPacket)
     }
     
@@ -1036,14 +1077,14 @@ public final class DataProto {
       "\ttimestamp\030\001 \002(\003\022\022\n\nservertime\030\002 \002(\003\022-\n\004" +
       "type\030\003 \002(\0162\037.tutorial.DataPacket.PacketT" +
       "ype\022\014\n\004data\030\004 \001(\014\"\"\n\nPacketType\022\t\n\005VIDEO" +
-      "\020\000\022\t\n\005AUDIO\020\001\"\347\001\n\rControlPacket\0221\n\004type\030" +
+      "\020\000\022\t\n\005AUDIO\020\001\"\205\002\n\rControlPacket\0221\n\004type\030" +
       "\001 \002(\0162#.tutorial.ControlPacket.ControlTy" +
       "pe\0224\n\007control\030\002 \001(\0162#.tutorial.ControlPa" +
-      "cket.ControlCode\022\017\n\007latency\030\003 \001(\003\"&\n\013Con" +
-      "trolType\022\n\n\006REMOTE\020\000\022\013\n\007LATENCY\020\001\"4\n\013Con" +
-      "trolCode\022\006\n\002UP\020\000\022\010\n\004DOWN\020\001\022\010\n\004LEFT\020\002\022\t\n\005",
-      "RIGHT\020\003B)\n\034edu.uiuc.cs414.group8desktopB" +
-      "\tDataProto"
+      "cket.ControlCode\022\017\n\007latency\030\003 \001(\003\022\022\n\nser" +
+      "vertime\030\004 \001(\003\"0\n\013ControlType\022\n\n\006REMOTE\020\000" +
+      "\022\013\n\007LATENCY\020\001\022\010\n\004PING\020\002\"4\n\013ControlCode\022\006",
+      "\n\002UP\020\000\022\010\n\004DOWN\020\001\022\010\n\004LEFT\020\002\022\t\n\005RIGHT\020\003B)\n" +
+      "\034edu.uiuc.cs414.group8desktopB\tDataProto"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -1063,7 +1104,7 @@ public final class DataProto {
           internal_static_tutorial_ControlPacket_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_tutorial_ControlPacket_descriptor,
-              new java.lang.String[] { "Type", "Control", "Latency", },
+              new java.lang.String[] { "Type", "Control", "Latency", "Servertime", },
               edu.uiuc.cs414.group8desktop.DataProto.ControlPacket.class,
               edu.uiuc.cs414.group8desktop.DataProto.ControlPacket.Builder.class);
           return null;

@@ -3,6 +3,12 @@ package edu.uiuc.cs414.group8droid;
 //acquire samples and dump 
 //May 11 2010 Bob G 
 
+import java.util.Date;
+
+import com.google.protobuf.ByteString;
+
+import edu.uiuc.cs414.group8desktop.DataProto.DataPacket;
+import edu.uiuc.cs414.group8desktop.DataProto.DataPacket.PacketType;
 import android.app.Activity; 
 import android.graphics.Color; 
 import android.media.AudioFormat; 
@@ -25,7 +31,7 @@ public class AudioRecordThread extends Thread {
 	public int buflen; 
 	public int channelConfiguration = AudioFormat.CHANNEL_CONFIGURATION_MONO; 
 	public int audioEncoding = AudioFormat.ENCODING_PCM_16BIT; 
-	public static short[] buffer; //+-32767 
+	public static byte[] buffer; //+-32767 
 	public static final int SAMPPERSEC = 8000; //samp per sec 8000, 11025, 22050 44100 or 48000 
 
 	public AudioRecordThread(SkeletonActivity parent) {
@@ -36,16 +42,27 @@ public class AudioRecordThread extends Thread {
 	public void run(){ 
 		//setContentView(R.layout.main); 
 		Log.d("Arecord","About to start recording");
-		buffersizebytes = AudioRecord.getMinBufferSize(SAMPPERSEC,channelConfiguration,audioEncoding) * 20; //4096 on ion 
-		buffer = new short[buffersizebytes]; 
+		//buffersizebytes = AudioRecord.getMinBufferSize(SAMPPERSEC,channelConfiguration,audioEncoding) * 20; //4096 on ion 
+		buffersizebytes = 1024;
+		buffer = new byte[buffersizebytes]; 
 		buflen=buffersizebytes/2; 
 		audioRecord = new AudioRecord(android.media.MediaRecorder.AudioSource.MIC,SAMPPERSEC, 
 				channelConfiguration,audioEncoding,buffersizebytes); //constructor 
 
 		try { 
 			audioRecord.startRecording(); 
-			mSamplesRead = audioRecord.read(buffer, 0, buffersizebytes); 
-			audioRecord.stop(); 
+			while(true)
+			{
+				mSamplesRead = audioRecord.read(buffer, 0, buffersizebytes); 
+				ByteString buf = ByteString.copyFrom(buffer);
+				DataPacket proto = DataPacket.newBuilder()
+					.setTimestamp((new Date()).getTime() /*- parent.initialTimestamp*/)
+					.setServertime((new Date()).getTime()/* - parent.initialTimestamp*/)
+					.setType(PacketType.AUDIO)
+					.setData(buf).build();
+				//queuePacket(proto);
+			}
+			//audioRecord.stop(); 
 		} catch (Throwable t) { 
 		//Log.e("AudioRecord", "Recording Failed"); 
 		} 

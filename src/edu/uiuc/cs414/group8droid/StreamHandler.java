@@ -1,8 +1,12 @@
 package edu.uiuc.cs414.group8droid;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Date;
@@ -19,6 +23,8 @@ public class StreamHandler implements Runnable {
     Socket sock;
     ObjectInputStream input;
     ObjectOutputStream output;
+
+    
     SkeletonActivity parent;
     byte[] dataBuffer;
     
@@ -26,7 +32,10 @@ public class StreamHandler implements Runnable {
     final static int MAX_LATENCY_MS = 500;
     
     final static int streamPort = 6666;
-    final static String serverIP = "192.17.255.94";
+
+    final static int nameserverPort = 3825;
+    final static String serverIP = "192.17.255.225";
+    final static String nameserverIP = "192.17.255.225";
     long initTimestamp;
     
     public VideoHandler videoHandler;
@@ -37,14 +46,18 @@ public class StreamHandler implements Runnable {
     	this.parent = parent;
     	initTimestamp = 0;
     }
-	public void run() {
+	
+    public void run() {
 		Log.d("Eightdroid", "StreamHandler running...");
-        while (true) {
+		while (true) {
         	try {
-
-		        
-				sock = new Socket(serverIP, streamPort);
+        		//String newServerIP = nameserverConnect("alice","query",nameserverIP,nameserverPort);
+				
+        		sock = new Socket(serverIP, streamPort);
+				
 				input = new ObjectInputStream(sock.getInputStream());
+				
+				
 				//output = new ObjectOutputStream(sock.getOutputStream());
 				
 				// Spawn audio and video worker threads
@@ -58,18 +71,69 @@ public class StreamHandler implements Runnable {
 				Log.d("Stream", "Successfully connected to server.");
 				readStream();
 			} catch (UnknownHostException e) {
-				Log.e("Stream", "unknown host");
-			} catch (IOException e) {
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e1) {
-					Log.e("Stream", "Thread sleep failed for some reason.");
-				}
-				//Log.e(TAG, "IO fail on socket connection");
+				Log.d("nameserver", "unknown host error");
+			} catch (IOException ee) {
+				Log.d("nameserver", "misc. IO error");
+				break;
+			} catch (SecurityException eee) {
+				Log.d("nameserver", "security Exception");
+				break;
+			} catch (NullPointerException eeee) {
+				Log.d("nameserver", "Null pointer exception");
+				break;
 			}
-        }
+			}
+			}
+
+	@SuppressWarnings("unused")
+	private String nameserverConnect(String sname, String stype, String nsIP, int nsPort) throws IOException {
+		String TrimmedIP;
+	    Socket nssock;
+	    DataInputStream nsinput;
+	    DataOutputStream nsoutput;
+
+		while(true){ //Try again if this was the server's first connection
+			Log.d("nameserver", "Connecting to nameserver");
+			nssock = new Socket(nsIP, nsPort);
+			
+			nsoutput = new DataOutputStream(nssock.getOutputStream());
+			Log.d("nameserver", "nameserver out stream opened");
+			
+			nsinput = new DataInputStream(nssock.getInputStream());
+			Log.d("nameserver", "nameserver in stream opened");
+			
+			byte[] name = new byte[16];
+			byte[] tname = sname.getBytes("US-ASCII");
+			byte[] type = new byte[16];
+			byte[] ttype = stype.getBytes("US-ASCII");
+			byte[] ip = new byte[48];
+			
+			java.lang.System.arraycopy(tname, 0, name, 0, tname.length);
+			java.lang.System.arraycopy(ttype, 0, type, 0, ttype.length);
+			
+			Log.d("nameserver", "Nameserver communication started");				
+
+			nsoutput.write(name);
+			nsoutput.write(type);
+			nsinput.readFully(ip);
+			
+			String ServerIP = new String(ip,0,0,48);
+			ServerIP.trim();
+			TrimmedIP = ServerIP.replace("\0", "");
+			
+			Log.d("nameserver", "Nameserver communication completed");
+			
+			Log.d("nameserver", "Server IP: " + TrimmedIP);
+			nssock.close();
+			
+			if(ServerIP.codePointAt(0) == 'x')
+				continue;
+			else
+				break;
+			}
+		
+		return TrimmedIP;
 	}
-	
 	public void readStream() {
 		// Read header
 		int size;
