@@ -119,7 +119,7 @@ public class SkeletonActivity
 			ControlPacket pingCtrl = ControlPacket.newBuilder()
 			.setType(ControlType.PING)
 			.build();
-			control.sendControlPkt(pingCtrl);
+			control.sendPing(pingCtrl);
 		}
 	}
     

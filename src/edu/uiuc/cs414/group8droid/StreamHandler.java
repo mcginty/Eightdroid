@@ -33,7 +33,7 @@ public class StreamHandler implements Runnable {
     
     final static int streamPort = 6666;
     final static int nameserverPort = 3825;
-    final static String serverIP = "192.17.255.225";
+    final static String serverIP = "192.17.252.150";
     final static String nameserverIP = "192.17.255.225";
     long initTimestamp;
     
@@ -47,7 +47,7 @@ public class StreamHandler implements Runnable {
     }
 	
     public void run() {
-		Log.d("Eightdroid", "StreamHandler running...");
+		Log.d("Stream", "StreamHandler running...");
 		while (true) {
         	try {
         		//String newServerIP = nameserverConnect("alice","query",nameserverIP,nameserverPort);
