@@ -42,17 +42,19 @@ public class AudioRecordThread extends Thread {
 	public void run(){ 
 		//setContentView(R.layout.main); 
 		Log.d("Arecord","About to start recording");
-		//buffersizebytes = AudioRecord.getMinBufferSize(SAMPPERSEC,channelConfiguration,audioEncoding) * 20; //4096 on ion 
-		buffersizebytes = 1024;
+		buffersizebytes = AudioRecord.getMinBufferSize(SAMPPERSEC,channelConfiguration,audioEncoding); //4096 on ion 
+		//buffersizebytes = 1024;
 		buffer = new byte[buffersizebytes]; 
 		buflen=buffersizebytes/2; 
 		audioRecord = new AudioRecord(android.media.MediaRecorder.AudioSource.MIC,SAMPPERSEC, 
 				channelConfiguration,audioEncoding,buffersizebytes); //constructor 
-
+		Log.d("Arecord","Audio Record Allocated");
 		try { 
 			audioRecord.startRecording(); 
+			Log.d("Arecord","AudioRecord.StartRecording() passed");
 			while(true)
 			{
+				Log.d("Arecord","Sample about to be grabbed");
 				mSamplesRead = audioRecord.read(buffer, 0, buffersizebytes); 
 				ByteString buf = ByteString.copyFrom(buffer);
 				DataPacket proto = DataPacket.newBuilder()
@@ -60,12 +62,13 @@ public class AudioRecordThread extends Thread {
 					.setServertime((new Date()).getTime()/* - parent.initialTimestamp*/)
 					.setType(PacketType.AUDIO)
 					.setData(buf).build();
-				//queuePacket(proto);
+				Log.d("Arecord", "Sample about to be queued");
+				parent.outnet.queuePacket(proto);
 			}
-			//audioRecord.stop(); 
 		} catch (Throwable t) { 
-		//Log.e("AudioRecord", "Recording Failed"); 
+			Log.e("AudioRecord", "Recording Failed"); 
 		} 
+		/*
 		AudioTrack audioOut;
 		audioOut = new AudioTrack(
 				AudioManager.STREAM_MUSIC, 
@@ -77,5 +80,6 @@ public class AudioRecordThread extends Thread {
 		audioOut.play();
 		Log.d("Arecord","About to start playing");
 		audioOut.write(buffer, 0, buffersizebytes);
+		 */
 	} 
 }//thread

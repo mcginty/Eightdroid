@@ -32,13 +32,13 @@ public class StreamHandler implements Runnable {
     final static int MAX_LATENCY_MS = 500;
     
     final static int streamPort = 6666;
-//    final static String serverIP = "192.17.255.225";
+//    final static String serverIP = "192.17.255.225";OutStreamHandler
 
     long initTimestamp;
     
     public VideoHandler videoHandler;
     public AudioHandler audioHandler;
-    public AudioRecordThread audioRecordThread;
+
     
     public StreamHandler(SkeletonActivity parent){
     	this.parent = parent;
