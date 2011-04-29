@@ -16,6 +16,7 @@
 
 package edu.uiuc.cs414.group8droid;
 
+import java.util.Date;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -34,6 +35,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import edu.uiuc.cs414.group8desktop.DataProto.ControlPacket;
 import edu.uiuc.cs414.group8desktop.DataProto.DataPacket;
+import edu.uiuc.cs414.group8desktop.DataProto.ControlPacket.ControlCode;
+import edu.uiuc.cs414.group8desktop.DataProto.ControlPacket.ControlType;
+import edu.uiuc.cs414.group8desktop.DataProto.DataPacket.PacketType;
 
 /**
  * This class provides a basic demonstration of how to write an Android
@@ -44,13 +48,12 @@ public class SkeletonActivity
 		extends Activity {
     
     static final private int EXIT_ID = Menu.FIRST;
-    static final private String TAG = "Eightdroid";
 
     public ImageView mVideoDisplay;
     public StreamHandler stream;
+    public ControlHandler control;
     
     // Gesture data
-    public mGesture curGesture;
     float startx = 0, starty = 0, endx = 0, endy = 0;
     
     
@@ -98,22 +101,18 @@ public class SkeletonActivity
         
         stream = new StreamHandler(this);
         (new Thread(stream)).start();
+        
+        control = new ControlHandler(this);
+        (new Thread(control)).start();
 
     }
-    
-    private enum mGesture { UP, DOWN, LEFT, RIGHT, NULL };
 	
     private OnTouchListener mTouchListener = new OnTouchListener() {
     	@ Override
 	public boolean onTouch(View v, MotionEvent event) {
 		
 		//Log.d("UI", "inside onTouch");
-		
-		
-		
-		//ControlPacket curGesture = mGesture.NULL;
-		//ControlPacket control;
-		//control.
+		ControlCode curCode = null;
 		
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
@@ -133,32 +132,37 @@ public class SkeletonActivity
 			if (endx < 0){
 				if (endy > 0) {
 					if (Math.abs(endy) > Math.abs(endx))
-						curGesture = mGesture.DOWN;
+						curCode = ControlCode.DOWN;
 					else
-						curGesture = mGesture.LEFT;
+						curCode = ControlCode.LEFT;
 				}
 				else if (endy < 0) {
 					if (Math.abs(endy) > Math.abs(endx))
-						curGesture = mGesture.UP;
+						curCode = ControlCode.UP;
 					else
-						curGesture = mGesture.LEFT;
+						curCode = ControlCode.LEFT;
 				}
 			}
 			else if (endx > 0) {
 				if (endy > 0) {
 					if (Math.abs(endy) > Math.abs(endx))
-						curGesture = mGesture.DOWN;
+						curCode = ControlCode.DOWN;
 					else
-						curGesture = mGesture.RIGHT;
+						curCode = ControlCode.RIGHT;
 				}
 				else if (endy < 0){
 					if (Math.abs(endy) > Math.abs(endx))
-						curGesture = mGesture.UP;
+						curCode = ControlCode.UP;
 					else
-						curGesture = mGesture.RIGHT;
+						curCode = ControlCode.RIGHT;
 				}				
 			}
-		Log.d("UI", "got gesture"+curGesture);	
+		Log.d("UI", "got gesture"+curCode);	
+		ControlPacket remoteCtrl = ControlPacket.newBuilder()
+								   .setType(ControlType.REMOTE)
+								   .setControl(curCode)
+								   .build();
+		control.sendRemotePkt(remoteCtrl);
 		break;
 		}
 
