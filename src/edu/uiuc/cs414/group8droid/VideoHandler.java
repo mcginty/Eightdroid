@@ -38,7 +38,7 @@ public class VideoHandler implements Runnable {
 				//if(playTimeStamp > captureTimeStamp) {
 				//	
 				//}
-				//else if(playTimeStamp < captureTimeStamp) {
+				//if(playTimeStamp < captureTimeStamp) {
 				//try {
 				//	Thread.sleep(captureTimeStamp - playTimeStamp);
 				//} catch (InterruptedException e) {

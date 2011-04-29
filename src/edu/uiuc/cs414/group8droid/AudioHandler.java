@@ -19,7 +19,7 @@ public class AudioHandler implements Runnable {
 	SkeletonActivity parent;	
 	final static String TAG = "Eightdroid";
 	final static int SAMPLE_RATE = 8000;
-	final static int BUFFER_SIZE = 1024;
+	final static int BUFFER_SIZE = 557*2;
 	
 	public AudioHandler(SkeletonActivity parent) {
 		this.parent = parent;
