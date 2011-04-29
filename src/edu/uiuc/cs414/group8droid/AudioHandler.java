@@ -37,7 +37,7 @@ public class AudioHandler implements Runnable {
 		DataPacket packet;
 		q = new LinkedBlockingQueue<DataPacket>();
 		while (true) {
-			while (q.size() > 10) q.remove();
+			while (q.size() > 10){ q.remove(); Log.d("Arecord","Audio packet dropped");}
 			if ( !q.isEmpty() ) {
 				packet = q.poll();
 				//Log.d("Audio", "Grabbed some AUDIO packeterrr with timestamp " + packet.getTimestamp());

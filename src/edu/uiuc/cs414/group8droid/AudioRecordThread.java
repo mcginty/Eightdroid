@@ -42,7 +42,9 @@ public class AudioRecordThread extends Thread {
 	public void run(){ 
 		//setContentView(R.layout.main); 
 		Log.d("Arecord","About to start recording");
-		buffersizebytes = AudioRecord.getMinBufferSize(SAMPPERSEC,channelConfiguration,audioEncoding); //4096 on ion 
+		buffersizebytes = AudioRecord.getMinBufferSize(SAMPPERSEC,channelConfiguration,audioEncoding); //4096 on ion
+		Log.d("Arecord", "buffer is bytes: " + buffersizebytes);
+		
 		//buffersizebytes = 1024;
 		buffer = new byte[buffersizebytes]; 
 		buflen=buffersizebytes/2; 
@@ -54,7 +56,6 @@ public class AudioRecordThread extends Thread {
 			Log.d("Arecord","AudioRecord.StartRecording() passed");
 			while(true)
 			{
-				Log.d("Arecord","Sample about to be grabbed");
 				mSamplesRead = audioRecord.read(buffer, 0, buffersizebytes); 
 				ByteString buf = ByteString.copyFrom(buffer);
 				DataPacket proto = DataPacket.newBuilder()
@@ -62,7 +63,6 @@ public class AudioRecordThread extends Thread {
 					.setServertime((new Date()).getTime()/* - parent.initialTimestamp*/)
 					.setType(PacketType.AUDIO)
 					.setData(buf).build();
-				Log.d("Arecord", "Sample about to be queued");
 				parent.outnet.queuePacket(proto);
 			}
 		} catch (Throwable t) { 
