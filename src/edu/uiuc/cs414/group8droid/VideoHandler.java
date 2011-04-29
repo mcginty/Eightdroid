@@ -4,13 +4,10 @@ import java.util.Date;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import edu.uiuc.cs414.group8desktop.DataProto.DataPacket;
-
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
-import android.widget.ImageView;
+import edu.uiuc.cs414.group8desktop.DataProto.DataPacket;
 
 public class VideoHandler implements Runnable {
 	Queue<DataPacket> q;

@@ -5,22 +5,14 @@ package edu.uiuc.cs414.group8droid;
 
 import java.util.Date;
 
+import android.media.AudioFormat;
+import android.media.AudioRecord;
+import android.util.Log;
+
 import com.google.protobuf.ByteString;
 
 import edu.uiuc.cs414.group8desktop.DataProto.DataPacket;
 import edu.uiuc.cs414.group8desktop.DataProto.DataPacket.PacketType;
-import android.app.Activity; 
-import android.graphics.Color; 
-import android.media.AudioFormat; 
-import android.media.AudioManager;
-import android.media.AudioRecord; 
-import android.os.Bundle; 
-import android.util.Log;
-import android.view.MotionEvent; 
-import android.widget.TextView; 
-
-//Testing imports
-import android.media.AudioTrack;
 
 public class AudioRecordThread extends Thread { 
 	SkeletonActivity parent;

@@ -3,18 +3,14 @@ package edu.uiuc.cs414.group8droid;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.Queue;
-import java.util.TimerTask;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import android.util.Log;
 import edu.uiuc.cs414.group8desktop.DataProto.ControlPacket;
-import edu.uiuc.cs414.group8desktop.DataProto.DataPacket;
 import edu.uiuc.cs414.group8desktop.DataProto.ControlPacket.ControlType;
 
 public class ControlHandler implements Runnable {

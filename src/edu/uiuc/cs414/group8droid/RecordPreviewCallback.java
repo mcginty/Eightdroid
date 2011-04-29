@@ -1,24 +1,19 @@
 package edu.uiuc.cs414.group8droid;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Date;
-import java.util.concurrent.Semaphore;
+
+import android.graphics.ImageFormat;
+import android.graphics.Rect;
+import android.graphics.YuvImage;
+import android.hardware.Camera;
+import android.hardware.Camera.PreviewCallback;
+import android.util.Log;
 
 import com.google.protobuf.ByteString;
 
 import edu.uiuc.cs414.group8desktop.DataProto.DataPacket;
 import edu.uiuc.cs414.group8desktop.DataProto.DataPacket.PacketType;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.hardware.Camera;
-import android.hardware.Camera.PreviewCallback;
-import android.util.Log;
 
 /**
  * RecordPreviewCallback
@@ -48,7 +43,13 @@ class RecordPreviewCallback implements PreviewCallback {
 		if (raw == null) Log.e("Eightdroid", "Balls. raw is null.");
 		raw.compress(Bitmap.CompressFormat.JPEG, 50, jpegstream);
 		*/
-		ByteString buf = ByteString.copyFrom(data);
+		int width = camera.getParameters().getPreviewSize().width;
+		int height = camera.getParameters().getPreviewSize().height;
+		YuvImage yuvimage=new YuvImage(data,ImageFormat.NV21,width,height,null);
+		ByteArrayOutputStream baos=new ByteArrayOutputStream();
+		yuvimage.compressToJpeg(new Rect(0, 0, width, height), 80, baos);
+
+		ByteString buf = ByteString.copyFrom(baos.toByteArray());
 		
 		DataPacket proto = DataPacket.newBuilder()
 			.setTimestamp((new Date()).getTime())

@@ -4,14 +4,11 @@ import java.util.Date;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import edu.uiuc.cs414.group8desktop.DataProto.DataPacket;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.util.Log;
+import edu.uiuc.cs414.group8desktop.DataProto.DataPacket;
 
 public class AudioHandler implements Runnable {
 	AudioTrack audioOut;

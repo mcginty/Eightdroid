@@ -20,9 +20,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-
-import java.util.Date;
-import java.util.List;
 import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -30,13 +27,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
-import android.hardware.Camera.PictureCallback;
-import android.hardware.Camera.ShutterCallback;
-import android.hardware.Camera.Size;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.util.Log;
@@ -48,16 +41,12 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import edu.uiuc.cs414.group8desktop.DataProto.ControlPacket;
-import edu.uiuc.cs414.group8desktop.DataProto.DataPacket;
 import edu.uiuc.cs414.group8desktop.DataProto.ControlPacket.ControlCode;
 import edu.uiuc.cs414.group8desktop.DataProto.ControlPacket.ControlType;
-import edu.uiuc.cs414.group8desktop.DataProto.DataPacket.PacketType;
+import edu.uiuc.cs414.group8desktop.DataProto.DataPacket;
 
 /**
  * This class provides a basic demonstration of how to write an Android
@@ -83,7 +72,7 @@ public class SkeletonActivity
     public EditText serverEdit;
     public String serverIP;
     final static String defaultNameserverPort = "3825";
-    final static String defaultNameserverIP = "192.17.252.150";
+    final static String defaultNameserverIP = "192.17.255.94";
     final static String defaultServerName = "alice";
     
     long initPhoneStamp;
@@ -425,13 +414,13 @@ public class SkeletonActivity
 		}
 		
 		// Merge here plox
-		//RecordPreviewCallback rpc = new RecordPreviewCallback(this);
+		RecordPreviewCallback rpc = new RecordPreviewCallback(this);
 		Parameters params = mCamera.getParameters();
 		params.setPreviewFrameRate(5);
-		//params.setPreviewFormat(ImageFormat.RGB_565);
+		params.setPreviewFormat(ImageFormat.RGB_565);
 		Log.d("UI", "Preview size: " + params.getPreviewSize().width + "x" + params.getPreviewSize().height);
 		mCamera.setParameters(params);
-		//mCamera.setPreviewCallback(rpc);
+		mCamera.setPreviewCallback(rpc);
 		mCamera.setDisplayOrientation(90);
 		mCamera.startPreview();
 		
