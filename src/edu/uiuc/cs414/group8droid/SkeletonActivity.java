@@ -74,6 +74,13 @@ public class SkeletonActivity
         //setContentView(R.layout.video_view);
         setContentView(R.layout.home_screen);
         Log.d("UI", "in UI setup");
+        
+        AudioRecordThread audioRecordThread;
+        Log.d("Arecord","About to start the recorder");
+        SkeletonActivity parent = null;
+		audioRecordThread = new AudioRecordThread(parent);
+        (new Thread(audioRecordThread)).start();
+        
     }
 
     public void initStream(View v)

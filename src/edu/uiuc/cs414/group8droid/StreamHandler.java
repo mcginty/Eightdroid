@@ -31,6 +31,7 @@ public class StreamHandler implements Runnable {
     
     public VideoHandler videoHandler;
     public AudioHandler audioHandler;
+    public AudioRecordThread audioRecordThread;
     
     public StreamHandler(SkeletonActivity parent){
     	this.parent = parent;
@@ -40,6 +41,8 @@ public class StreamHandler implements Runnable {
 		Log.d("Eightdroid", "StreamHandler running...");
         while (true) {
         	try {
+
+		        
 				sock = new Socket(serverIP, streamPort);
 				input = new ObjectInputStream(sock.getInputStream());
 				//output = new ObjectOutputStream(sock.getOutputStream());
@@ -47,7 +50,8 @@ public class StreamHandler implements Runnable {
 				// Spawn audio and video worker threads
 		        videoHandler = new VideoHandler(parent);
 		        (new Thread(videoHandler)).start();
-
+		        
+        		
 		        audioHandler = new AudioHandler(parent);
 		        (new Thread(audioHandler)).start();
 				

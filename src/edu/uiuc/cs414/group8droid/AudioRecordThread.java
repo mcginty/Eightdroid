@@ -6,14 +6,20 @@ package edu.uiuc.cs414.group8droid;
 import android.app.Activity; 
 import android.graphics.Color; 
 import android.media.AudioFormat; 
+import android.media.AudioManager;
 import android.media.AudioRecord; 
 import android.os.Bundle; 
+import android.util.Log;
 import android.view.MotionEvent; 
 import android.widget.TextView; 
+
+//Testing imports
+import android.media.AudioTrack;
 
 public class AudioRecordThread extends Thread { 
 	SkeletonActivity parent;
 	public AudioRecord audioRecord; 
+	
 	public int mSamplesRead; //how many samples read 
 	public int buffersizebytes; 
 	public int buflen; 
@@ -29,7 +35,8 @@ public class AudioRecordThread extends Thread {
 	@Override 
 	public void run(){ 
 		//setContentView(R.layout.main); 
-		buffersizebytes = AudioRecord.getMinBufferSize(SAMPPERSEC,channelConfiguration,audioEncoding); //4096 on ion 
+		Log.d("Arecord","About to start recording");
+		buffersizebytes = AudioRecord.getMinBufferSize(SAMPPERSEC,channelConfiguration,audioEncoding) * 20; //4096 on ion 
 		buffer = new short[buffersizebytes]; 
 		buflen=buffersizebytes/2; 
 		audioRecord = new AudioRecord(android.media.MediaRecorder.AudioSource.MIC,SAMPPERSEC, 
@@ -42,5 +49,16 @@ public class AudioRecordThread extends Thread {
 		} catch (Throwable t) { 
 		//Log.e("AudioRecord", "Recording Failed"); 
 		} 
+		AudioTrack audioOut;
+		audioOut = new AudioTrack(
+				AudioManager.STREAM_MUSIC, 
+				SAMPPERSEC, 
+				AudioFormat.CHANNEL_CONFIGURATION_MONO, 
+				AudioFormat.ENCODING_PCM_16BIT, 
+				SAMPPERSEC,
+				AudioTrack.MODE_STREAM);
+		audioOut.play();
+		Log.d("Arecord","About to start playing");
+		audioOut.write(buffer, 0, buffersizebytes);
 	} 
 }//thread

@@ -33,6 +33,7 @@
     <uses-sdk android:targetSdkVersion="8" android:minSdkVersion="8"></uses-sdk>
     <uses-permission android:name="android.permission.WAKE_LOCK"></uses-permission>
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <uses-permission android:name="android.permission.RECORD_AUDIO"></uses-permission>
     <application android:label="@string/skeleton_app">
 
         <!-- An Activity in the application - this is something the user
