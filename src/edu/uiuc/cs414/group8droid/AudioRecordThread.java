@@ -48,11 +48,12 @@ public class AudioRecordThread extends Thread {
 			Log.d("Arecord","AudioRecord.StartRecording() passed");
 			while(true)
 			{
+				long tempInitTimestamp = (new Date()).getTime();
 				mSamplesRead = audioRecord.read(buffer, 0, buffersizebytes); 
 				ByteString buf = ByteString.copyFrom(buffer);
 				DataPacket proto = DataPacket.newBuilder()
-					.setTimestamp((new Date()).getTime() /*- parent.initialTimestamp*/)
-					.setServertime((new Date()).getTime()/* - parent.initialTimestamp*/)
+					.setTimestamp(tempInitTimestamp /*- parent.initialTimestamp*/)
+					.setServertime(parent.delta/* - parent.initialTimestamp*/)
 					.setType(PacketType.AUDIO)
 					.setData(buf).build();
 				parent.outnet.queuePacket(proto);
