@@ -67,7 +67,7 @@ public class StreamHandler implements Runnable {
 		        audioHandler = new AudioHandler(parent);
 		        (new Thread(audioHandler)).start();
 				
-				Log.d(TAG, "Successfully connected to server.");
+				Log.d("Stream", "Successfully connected to server.");
 				readStream();
 			} catch (UnknownHostException e) {
 				Log.d("nameserver", "unknown host error");
@@ -82,17 +82,9 @@ public class StreamHandler implements Runnable {
 				break;
 			}
 			}
-			
-				/*
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e1) {
-					Log.e(TAG, "Thread sleep failed for some reason.");
-				}
-				*/
-				//Log.e(TAG, "IO fail on socket connection");
 			}
 
+	@SuppressWarnings("unused")
 	private String nameserverConnect(String sname, String stype, String nsIP, int nsPort) throws IOException {
 		String TrimmedIP;
 	    Socket nssock;
@@ -145,25 +137,25 @@ public class StreamHandler implements Runnable {
 		// Read header
 		int size;
 		while (!done) {
-			Log.d(TAG, "Attempting read of bytes...");
+			//Log.d("Stream", "Attempting read of bytes...");
 			try {
 				size = input.readInt();
-				Log.d("Eightdroid", "Received packet of size " + size);
+				//Log.d("Eightdroid", "Received packet of size " + size);
 				byte[] bytes = new byte[size];
 				input.readFully(bytes);
 				DataPacket pkt = DataPacket.parseFrom(bytes);
 				if (initTimestamp == 0)
 					initTimestamp = (new Date()).getTime();
-				Log.d("Eightdroid", "Latency: " + ((pkt.getTimestamp() - ((new Date()).getTime() - initTimestamp))));
+				//Log.d("Stream", "Latency: " + ((pkt.getTimestamp() - ((new Date()).getTime() - initTimestamp))));
 				if (pkt.getType() == DataPacket.PacketType.VIDEO) {
 					videoHandler.queueFrame(pkt); // modified from parent
 				}
 				else if (pkt.getType() == DataPacket.PacketType.AUDIO) {
-					Log.d("Eightdroid", "Queued an audio packet!");
+					//Log.d("Stream", "Queued an audio packet!");
 					audioHandler.queueFrame(pkt); //modified from parent
 				}
 			} catch (IOException e) {
-				Log.e("Eightdroid", "IOException in receiving the packet. Message: " + e.getStackTrace());
+				Log.e("Stream", "IOException in receiving the packet. Message: " + e.getStackTrace());
 				close();
 				return;
 			}

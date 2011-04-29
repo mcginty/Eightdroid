@@ -25,7 +25,7 @@ public class AudioHandler implements Runnable {
 	}
 	@Override
 	public void run() {
-		Log.d(TAG, "AudioHandler Thread running.");
+		Log.d("Audio", "AudioHandler Thread running.");
 		audioOut = new AudioTrack(
 				AudioManager.STREAM_MUSIC, 
 				SAMPLE_RATE, 
@@ -40,7 +40,7 @@ public class AudioHandler implements Runnable {
 			while (q.size() > 10) q.remove();
 			if ( !q.isEmpty() ) {
 				packet = q.poll();
-				Log.d(TAG, "Grabbed some AUDIO packeterrr with timestamp " + packet.getTimestamp());
+				//Log.d("Audio", "Grabbed some AUDIO packeterrr with timestamp " + packet.getTimestamp());
 				byte[] audio = packet.getData().toByteArray();
 				audioOut.write(audio, 0, audio.length);
 			}

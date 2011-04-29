@@ -23,13 +23,13 @@ public class VideoHandler implements Runnable {
 
 	@Override
 	public void run() {
-		Log.d(TAG, "VideoHandler Thread running.");
+		Log.d("Video", "VideoHandler Thread running.");
 		DataPacket packet;
 		q = new LinkedBlockingQueue<DataPacket>();
 		while (true) {
 			if ( !q.isEmpty() ) {
 				packet = q.poll();
-				Log.d(TAG, "Grabbed packet with timestamp " + packet.getTimestamp());
+				//Log.d("Video", "Grabbed packet with timestamp " + packet.getTimestamp());
 				byte[] jpeg = packet.getData().toByteArray();
 				final Bitmap imageBuffer = BitmapFactory.decodeByteArray(jpeg, 0, jpeg.length);
 				parent.mVideoDisplay.post(new Runnable() {
