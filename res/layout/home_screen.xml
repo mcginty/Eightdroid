@@ -29,21 +29,33 @@
         android:id="@+id/ipaddr"
         android:layout_height="wrap_content"
         android:background="@android:drawable/editbox_background"
-        android:layout_width="200px"
+        android:layout_width="250px"
         android:textSize="24sp"
-        android:layout_marginBottom="10sp"
+        android:singleLine="true"
+        android:layout_marginBottom="15sp"
         android:layout_alignParentRight="true"/>
     <EditText
         android:id="@+id/port"
-        android:layout_width="200px"
+        android:layout_width="250px"
         android:layout_height="wrap_content"
         android:background="@android:drawable/editbox_background"
         android:layout_below="@id/ipaddr"
         android:textSize="24sp"
+        android:singleLine="true"
         android:layout_marginBottom="15sp"
         android:layout_alignParentRight="true"/>
-    <TextView
-        android:id="@+id/text_ip"
+	<EditText
+        android:id="@+id/server"
+        android:layout_width="250px"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/editbox_background"
+        android:layout_below="@id/port"
+        android:textSize="24sp"
+        android:singleLine="true"
+        android:layout_marginBottom="20sp"
+        android:layout_alignParentRight="true"/>
+ <!--   <TextView
+        android:id="@+id/text_port"
         android:layout_height="wrap_content"
         android:text="IP address:"
         android:layout_width="wrap_content"
@@ -63,26 +75,40 @@
         android:layout_marginTop="5sp"
         android:layout_marginRight="8sp"
         android:layout_toLeftOf="@id/port"/>
-    <Button
-   		android:text="Quit"
-        android:id="@+id/quit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/port"
-        android:textSize="24sp"
-        android:layout_marginRight="10sp"
-        android:layout_alignParentRight="true"/>
+        -->
+
     <Button
     	android:onClick="initStream"
     	android:text="Connect"
     	android:id="@+id/connect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/port"
+        android:layout_below="@id/server"
         android:textSize="24sp"
-        android:layout_marginRight="15sp"
-        android:layout_toLeftOf="@id/quit"
-         />
+        android:layout_marginRight="65sp"
+        android:layout_alignParentRight="true"/>
+    <Button
+    	android:onClick="defaultConfig"
+   		android:text="Defaults"
+        android:id="@+id/defaults"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/connect"
+        android:textSize="24sp"
+        android:layout_marginRight="20sp"
+        android:layout_marginTop = "20sp"
+        android:layout_alignParentRight="true"/>
+     <Button
+     	android:onClick="clearConfig"
+   		android:text="Clear"
+        android:id="@+id/clear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/connect"
+        android:layout_toLeftOf="@+id/defaults"
+        android:textSize="24sp"
+        android:layout_marginRight="10sp"
+        android:layout_marginTop="20sp"/>
 </RelativeLayout>
 
 
