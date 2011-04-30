@@ -1,8 +1,5 @@
 package edu.uiuc.cs414.group8droid;
 
-//acquire samples and dump 
-//May 11 2010 Bob G 
-
 import java.util.Date;
 
 import android.media.AudioFormat;
